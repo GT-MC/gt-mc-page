@@ -438,15 +438,10 @@ body.light #tinput{color:var(--t)}
 <script>
 const CONFIG = {
   gamemodes: [
-    { name:'Event Server',   ico:'🎪', desc:'Regelmäßige Events, Turniere & Sonderaktionen. Sei dabei, wenn es zählt.',       badge:'seasonal',    color:'#ff6b35' },
-    { name:'MMA',            ico:'🥊', desc:'Mixed Martial Arts PvP — zeige deine Kampfkünste im Ring.',                       badge:'pvp',          color:'#ff8c42' },
-    { name:'Skyblock',       ico:'🏝️', desc:'Baue dein Imperium aus dem Nichts. Kleine Insel, große Träume.',                  badge:'survival',     color:'#ff6b35' },
-    { name:'Simple SMP',     ico:'🌍', desc:'Klassisches Survival Multiplayer. Echte Minecraft-Erfahrung ohne Kompromisse.',   badge:'vanilla+',     color:'#ff8c42' },
-    { name:'GTMC',           ico:'⚡', desc:'Unser einzigartiger Gamemode. Unser Herzstück — discover it yourself.',           badge:'exclusive',    color:'#ff4488' },
-    { name:'Duels',          ico:'⚔️', desc:'1v1 bis zum Sieg. Verschiedene Arenen & Kits. Wer ist der Beste?',               badge:'competitive',  color:'#ffd700' },
-    { name:'Bedwars',        ico:'🛏️', desc:'Verteidige dein Bett, zerstöre die anderen. Team-Taktik trifft PvP.',            badge:'team',         color:'#ff2255' },
-    { name:'Skywars',        ico:'🌤️', desc:'Plünder, baue Brücken, eliminiere alle. Last man standing.',                     badge:'solo',         color:'#ff7744' },
-    { name:'Knockback FFA',  ico:'👊', desc:'Kein Schaden, nur Knockback. Wirf alle von der Plattform.',                      badge:'ffa',          color:'#ff9500' },
+    { name:'SMP',   ico:'🌲', desc:'',       badge:'seasonal',    color:'#ff6b35' },
+    { name:'B-SMP',   ico:'🌲', desc:'',       badge:'seasonal',    color:'#ff6b35' },
+  
+
   ],
   ranks: [
     { name:'VIP',    ico:'🥉', gems:'500',    color:'#d4889a', tag:'STARTER',   popular:false, perks:['Farbiges [VIP] Prefix im Chat','/fly in der Lobby','2 X Shards','/sign auf smp'] },
@@ -458,17 +453,11 @@ const CONFIG = {
     { name:'CREATOR',ico:'📷', gems:'ONLY APLY',color:'#ff6b35',tag:'MEDIA',   popular:false, perks:['Alles aus ELITE','Force Lobby start','Mute & Prio report','Creator tag','Stream add','Global server chat','7 tage vip gift'] },
   ],
   team: [
-    { name:'Felix',   mc:'LFT10',          role:'👑 FOUNDER', color:'#ff6b35', crown:'👑', founder:true, founderDesc:'Founder von GT-MC — hat alles aufgebaut & am Laufen gehalten.' },
-    { name:'Nero',    mc:'DroppedbyxNero', role:'MANAGEMENT', color:'#ffd700', crown:'⭐' },
-    { name:'Angelo',  mc:'AngeloGXMR',     role:'OWNER',      color:'#ff4488', crown:'👑', dashBorder:true },
-    { name:'Jan',     mc:'jan1653',         role:'CO-OWNER',   color:'#ff8c42', crown:'' },
-    { name:'No-name', mc:'4tiv',           role:'ADMIN',      color:'#ff2244', crown:'' },
+    { name:'Felix',   mc:'LFT10',          role:'👑 FOUNDER', color:'#ff6b35', crown:'🎟️', founder:true, founderDesc:'Founder von GT-MC — hat alles aufgebaut & am Laufen gehalten.' },
+    { name:'Nero',    mc:'DroppedbyxNero', role:'MANAGEMENT', color:'#ffd700', crown:'' },
+    { name:'Angelo',  mc:'AngeloGXMR',     role:'OWNER',      color:'#ff4488', crown:'', dashBorder:true },
     { name:'Nico',    mc:'ronny_9n',        role:'MODERATOR',  color:'#ff6b35', crown:'' },
-    { name:'Mr None', mc:'3quh',           role:'HELPER',     color:'#d4889a', crown:'' },
-    { name:'Matteo',  mc:'matteoGhgyt',     role:'CREATOR',    color:'#ff4488', crown:'' },
-    { name:'Stynx',   mc:'blue_bc',         role:'CREATOR',    color:'#ff4488', crown:'' },
-    { name:'Sammy',   mc:'cassiusrox',      role:'BUILDER',    color:'#ff7755', crown:'' },
-    { name:'corni',   mc:'corni_1',         role:'TESTER',     color:'#ff9500', crown:'' },
+    { name:'Eneek',    mc:'eneek_yt',        role:'CREATOR',  color:'FF2A00', crown:'' },
   ],
 };
 
@@ -559,19 +548,21 @@ function toggleTheme(){
 /* ════ NEW SHOP ════ */
 const SHOP_DATA={
   raenge:{label:'Ränge',icon:'👑',color:'#ffd700',items:[
-    {ico:'🥉',name:'VIP',desc:'Farbiges Prefix, /fly in Lobby, 2x Shards, /sign auf SMP.',price:500},
-    {ico:'🌿',name:'PREMIUM',desc:'Alles aus VIP + Custom Namecolor, Prio Join, Discord Rang.',price:1200},
-    {ico:'🥇',name:'GOLD',desc:'Alles aus PREMIUM + Prio Support, 6 /home Slots, Partikel.',price:2500},
-    {ico:'💠',name:'PLATIN',desc:'Alles aus GOLD + Beta Zugang, /nick, Platin-Only Events.',price:5000},
-    {ico:'⚡',name:'ELITE',desc:'Alles aus PLATIN + Partikel Trail, unlimitierte /home Slots.',price:10000},
-    {ico:'👑',name:'MASTER',desc:'Alles aus ELITE + Join Sound, Fly auf SMP, VIP-Support.',price:25000},
+    {ico:'🥉',name:'VIP',desc:'Farbiges Prefix, /fly in Lobby, 2x Shards, /sign auf SMP.',price:5000},
+    {ico:'🌿',name:'PREMIUM',desc:'Alles aus VIP + Custom Namecolor, Prio Join, Discord Rang.',price:10000},
+    {ico:'🥇',name:'GOLD',desc:'Alles aus PREMIUM + Prio Support, 6 /home Slots, Partikel.',price:15000},
+    {ico:'💠',name:'PLATIN',desc:'Alles aus GOLD + Beta Zugang, /nick, Platin-Only Events.',price:25000},
+    {ico:'⚡',name:'ELITE',desc:'Alles aus PLATIN + Partikel Trail, unlimitierte /home Slots.',price:50000},
+    {ico:'👑',name:'MASTER',desc:'Alles aus ELITE + Join Sound, Fly auf SMP, VIP-Support.',price:100000},
   ]},
   upranks:{label:'UP Ranks',icon:'⬆️',color:'#ff8c42',items:[
-    {ico:'🔺',name:'Rank Boost I',desc:'Verdiene für 7 Tage 25% mehr Shards in allen Gamemodes.',price:300},
-    {ico:'🔺🔺',name:'Rank Boost II',desc:'Verdiene für 7 Tage 50% mehr Shards in allen Gamemodes.',price:600},
-    {ico:'🔺🔺🔺',name:'Rank Boost III',desc:'Verdiene für 7 Tage doppelte Shards überall.',price:1000},
-    {ico:'🏆',name:'XP Boost',desc:'14 Tage lang 2x XP auf allen Gamemodes.',price:750},
-    {ico:'🎯',name:'Drop Boost',desc:'7 Tage erhöhte Drop-Rate bei Crates & Events.',price:400},
+    {ico:'🔺',name:'Rank Boost I',desc:'VIP >>> PREMIUM',price:7500},
+    {ico:'🔺',name:'Rank Boost II',desc:'PREMIUM >>> GOLD',price:10000},
+    {ico:'🔺',name:'Rank Boost III',desc:'GOLD >>> PLATIN',price:20000},
+    {ico:'🔺',name:'Rank Boost IV',desc:'PLATIN >>> ELITE',price:45000},
+    {ico:'🔺',name:'Rank Boost V',desc:'ELITE >>> MASTER',price:75000},
+    
+
   ]},
   moderation:{label:'Moderation',icon:'🛡️',color:'#ff4488',items:[
     {ico:'🔕',name:'Mute Schutz',desc:'Schützt dich 7 Tage vor temporären Mutes durch andere Spieler.',price:800},
@@ -581,12 +572,12 @@ const SHOP_DATA={
     {ico:'🏛️',name:'Appeal Fast Track',desc:'Dein Ban-Appeal wird innerhalb von 24h bearbeitet, nicht 72h.',price:1200},
   ]},
   keys:{label:'Keys',icon:'🔑',color:'#a855f7',items:[
-    {ico:'🗝️',name:'Common Key',desc:'Öffnet eine Common Crate — enthält Items, Shards & Boosts.',price:150},
-    {ico:'🔑',name:'Rare Key',desc:'Öffnet eine Rare Crate mit seltenen Cosmetics & Rängen.',price:500},
-    {ico:'🏅',name:'Epic Key',desc:'Öffnet eine Epic Crate mit exklusiven Items & Rang-Teilen.',price:1200},
-    {ico:'💎',name:'Legendary Key',desc:'Öffnet die Legendary Crate — höchste Drop-Chance für Ränge.',price:3000},
-    {ico:'🌟',name:'Event Key',desc:'Nur bei Events verfügbar — enthält limitierte Cosmetics.',price:2000},
-    {ico:'🎁',name:'Mystery Box',desc:'Überraschungsinhalt — könnte alles sein. Viel Glück!',price:999},
+    {ico:'🗝️',name:'COMMON Key',desc:'',price:2500},
+    {ico:'🔷',name:'PRIME Key',desc:'',price:5000},
+    {ico:'⭐',name:'GOLD Key',desc:'',price:10000},
+    {ico:'🔶',name:'CRIMSON Key',desc:'',price:25000},
+    {ico:'🎩',name:'COSMTIC Key',desc:'',price:2500},
+    
   ]},
   booster:{label:'Booster',icon:'🚀',color:'#a855f7',items:[
     {ico:'💨',name:'Speed Booster',desc:'Erhöhe deine Bewegungsgeschwindigkeit für 1 Stunde.',price:200},
