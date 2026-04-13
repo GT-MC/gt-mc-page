@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT-MC — Minecraft Server</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0303;--s:#1a0a0a;--s2:#1f0d0d;--s3:#120606;--b:rgba(255,30,60,.13);--a:#ff1e3c;--a2:#ff6b35;--a3:#ffd700;--a4:#ff4488;--red:#ff1e3c;--t:#ffe8ec;--t2:#d4889a;--t3:#7a3848;--glow:rgba(255,30,60,.45)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t);font-family:'JetBrains Mono',monospace;overflow-x:hidden;cursor:none}
+#cur{position:fixed;width:14px;height:14px;background:var(--a);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 16px var(--a),0 0 40px var(--glow);transition:transform .08s,background .2s}
+#cr{position:fixed;width:40px;height:40px;border:1.5px solid rgba(255,30,60,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s}
+#bgc{position:fixed;inset:0;z-index:0;opacity:.07;pointer-events:none}
+body::before{content:'';position:fixed;inset:0;z-index:1;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none}
+nav{position:fixed;top:0;width:100%;z-index:200;padding:16px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,3,3,.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--b)}
+nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--a),transparent);animation:navscan 4s linear infinite}
+@keyframes navscan{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.nlogo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.2rem;letter-spacing:.1em;color:var(--a);animation:logopulse 3s ease-in-out infinite}
+@keyframes logopulse{0%,100%{text-shadow:0 0 24px var(--glow),0 0 50px var(--glow)}50%{text-shadow:0 0 40px var(--glow),0 0 100px var(--glow)}}
+.nlinks{display:flex;gap:22px;list-style:none}
+.nlinks a{font-size:.7rem;color:var(--t3);text-decoration:none;letter-spacing:.08em;transition:color .2s;position:relative}
+.nlinks a::before{content:'// ';color:var(--a);opacity:.45}
+.nlinks a:hover{color:var(--a)}
+.nlinks a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:var(--a);transition:width .25s}
+.nlinks a:hover::after{width:100%}
+.nbtns{display:flex;gap:10px}
+.bdc,.bip,.bshop{font-family:'JetBrains Mono',monospace;font-size:.7rem;padding:8px 14px;border:1px solid;cursor:none;letter-spacing:.08em;transition:all .25s;position:relative;overflow:hidden;text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+.bdc{border-color:#5865f2;color:#5865f2}.bip{border-color:var(--a);color:var(--a)}.bshop{border-color:#ffd700;color:#ffd700}
+.bdc::before,.bip::before,.bshop::before{content:'';position:absolute;inset:0;transform:scaleX(0);transform-origin:left;transition:transform .25s;z-index:-1}
+.bdc::before{background:#5865f2}.bip::before{background:var(--a)}.bshop::before{background:#ffd700}.bapply::before{background:var(--a2)}
+.bdc:hover{color:#fff}.bdc:hover::before,.bip:hover::before,.bshop:hover::before{transform:scaleX(1)}
+.bip:hover,.bshop:hover{color:var(--bg)}
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:120px 48px 80px;z-index:2;overflow:hidden}
+.hgrid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,30,60,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,30,60,.04) 1px,transparent 1px);background-size:60px 60px;animation:gridmove 20s linear infinite}
+@keyframes gridmove{0%{background-position:0 0}100%{background-position:60px 60px}}
+.hg1{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(255,30,60,.12) 0%,transparent 70%);top:-200px;left:-200px;animation:orb 7s ease-in-out infinite;pointer-events:none}
+.hg2{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(255,30,60,.08) 0%,transparent 70%);bottom:-100px;right:-100px;animation:orb 9s ease-in-out infinite reverse;pointer-events:none}
+.hg3{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(255,68,136,.07) 0%,transparent 70%);top:40%;left:50%;transform:translate(-50%,-50%);animation:orb 5s ease-in-out infinite 2s;pointer-events:none}
+@keyframes orb{0%,100%{opacity:.7;transform:scale(1)}33%{opacity:1;transform:scale(1.12) translate(20px,-20px)}66%{opacity:.6;transform:scale(.9) translate(-15px,15px)}}
+.hcont{position:relative;text-align:center;z-index:3}
+.hbadge{display:inline-flex;align-items:center;gap:10px;font-size:.7rem;color:var(--a2);letter-spacing:.18em;text-transform:uppercase;margin-bottom:28px;animation:fup .8s ease both;border:1px solid rgba(255,30,60,.2);padding:6px 18px;background:rgba(255,30,60,.04)}
+.hdot{width:7px;height:7px;border-radius:50%;background:var(--a2);box-shadow:0 0 8px var(--a2);animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+.htitle{font-family:'Orbitron',monospace;font-size:clamp(4.5rem,13vw,11rem);font-weight:900;line-height:.88;letter-spacing:.05em;margin-bottom:8px;animation:fup .8s .1s ease both}
+.ht-gt{color:var(--t)}.ht-dash{color:var(--t3)}.ht-mc{color:var(--a);text-shadow:0 0 40px var(--glow),0 0 80px var(--glow);animation:mcflicker 6s ease-in-out infinite}
+@keyframes mcflicker{0%,88%,100%{text-shadow:0 0 40px var(--glow),0 0 80px var(--glow)}90%,96%{text-shadow:none}92%,94%{text-shadow:0 0 40px var(--glow),0 0 80px var(--glow)}}
+.hversion{font-size:.65rem;color:var(--a2);letter-spacing:.12em;margin-bottom:8px;animation:fup .8s .14s ease both;display:flex;align-items:center;justify-content:center;gap:12px}
+.hversion b{background:rgba(255,30,60,.1);border:1px solid rgba(255,30,60,.22);padding:3px 10px}
+.hsub{font-size:.83rem;color:var(--t3);letter-spacing:.08em;margin:14px 0 40px;animation:fup .8s .2s ease both}
+.hsub span{color:var(--a2)}
+.hip-wrap{animation:fup .8s .3s ease both;display:inline-flex;align-items:stretch;border:1px solid rgba(255,30,60,.3);position:relative;overflow:hidden}
+.hip-wrap::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,30,60,.04),transparent);animation:shimmer 3s linear infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.iplbl{padding:14px 16px;background:rgba(255,30,60,.08);color:var(--a);font-size:.66rem;letter-spacing:.12em;border-right:1px solid rgba(255,30,60,.2)}
+.ipval{padding:14px 24px;font-size:.95rem;font-weight:700;color:var(--t);letter-spacing:.06em;user-select:all}
+.ipcopy{padding:14px 18px;background:var(--a);color:var(--bg);font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:.1em;border:none;cursor:none;transition:background .2s}
+.ipcopy:hover,.ipcopy.ok{background:var(--a2)}
+.hscroll{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;animation:fup 1s .7s ease both}
+.hscroll span{font-size:.6rem;color:var(--t3);letter-spacing:.18em;text-transform:uppercase}
+.sbar{width:1px;height:50px;background:linear-gradient(180deg,var(--a) 0%,transparent 100%);animation:scr 2s ease-in-out infinite}
+@keyframes scr{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+@keyframes fup{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+.tkwrap{position:relative;z-index:2;background:var(--s);border-top:1px solid var(--b);border-bottom:1px solid var(--b);overflow:hidden}
+.tkinner{display:flex;animation:tick 32s linear infinite;white-space:nowrap;width:max-content}
+.tkitem{display:inline-flex;align-items:center;gap:10px;padding:13px 36px;font-size:.7rem;color:var(--t2);letter-spacing:.07em;border-right:1px solid var(--b)}
+.tkitem b{color:var(--t)}
+.dk{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dk.g{background:var(--a2);box-shadow:0 0 6px var(--a2);animation:blink 2s ease-in-out infinite}
+.dk.o{background:var(--a3);box-shadow:0 0 6px var(--a3);animation:blink 2.5s ease-in-out infinite}
+.dk.y{background:#ffd700;box-shadow:0 0 6px #ffd700;animation:blink 2s ease-in-out infinite .5s}
+.dk.r{background:var(--a);box-shadow:0 0 6px var(--a);animation:blink 1.8s ease-in-out infinite}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.sec{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:100px 48px}
+.stag{font-size:.66rem;color:var(--a);letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.stag::after{content:'';display:block;width:50px;height:1px;background:var(--a);opacity:.35}
+.stitle{font-family:'Orbitron',monospace;font-size:clamp(1.8rem,4vw,3rem);font-weight:900;letter-spacing:.04em;line-height:1.1;margin-bottom:56px}
+.stitle .ca{color:var(--a)}.stitle .cg{color:var(--a2)}.stitle .cp{color:var(--a4)}.stitle .cy{color:#ffd700}
+.rv{opacity:0;transform:translateY(44px);transition:opacity .7s ease,transform .7s ease}
+.rvr{opacity:0;transform:translateX(44px);transition:opacity .7s ease,transform .7s ease}
+.rv.on,.rvr.on{opacity:1;transform:none}
+.gmgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:rgba(255,30,60,.06);border:1px solid var(--b)}
+@media(max-width:900px){.gmgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.gmgrid{grid-template-columns:1fr}}
+.gmc{background:var(--s);padding:30px 24px;position:relative;overflow:hidden;cursor:none;transition:background .3s,transform .3s}
+.gmc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--ca,var(--a));transition:width .3s}
+.gmc::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,var(--cg,rgba(255,30,60,.06)) 0%,transparent 60%);opacity:0;transition:opacity .3s}
+.gmc:hover{background:var(--s2);transform:translateY(-3px) translateX(3px)}.gmc:hover::before{width:3px}.gmc:hover::after{opacity:1}
+.gmc>*{position:relative;z-index:1}
+.gmnum{font-size:.6rem;color:var(--t3);letter-spacing:.15em;margin-bottom:10px}
+.gmico{font-size:2.1rem;margin-bottom:12px;display:block;transition:transform .3s,filter .3s}
+.gmc:hover .gmico{transform:scale(1.08) rotate(-4deg);filter:drop-shadow(0 0 10px var(--ca,var(--a)))}
+.gmname{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;color:var(--t);margin-bottom:7px;letter-spacing:.04em}
+.gmdesc{font-size:.75rem;color:var(--t2);line-height:1.65}
+.gmbadge{display:inline-block;margin-top:12px;font-size:.58rem;letter-spacing:.1em;padding:3px 9px;border:1px solid var(--ca,var(--a));color:var(--ca,var(--a));text-transform:uppercase;transition:all .2s}
+.gmc:hover .gmbadge{background:var(--ca,var(--a));color:var(--bg)}
+@keyframes rippanim{to{transform:scale(4);opacity:0}}
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:1000px){.shop-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.shop-grid{grid-template-columns:1fr}}
+.rank-card{background:var(--s);border:1px solid var(--b);position:relative;overflow:hidden;cursor:none;transition:transform .35s,box-shadow .35s,border-color .35s;display:flex;flex-direction:column}
+.rank-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% -20%,var(--rcg),transparent 55%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+.rank-card:hover{transform:translateY(-8px);box-shadow:0 28px 60px var(--rcs);border-color:var(--rc)}
+.rank-card:hover::before{opacity:1}
+.rank-card>*{position:relative;z-index:1}
+.rank-top{padding:28px 22px 20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)}
+.rank-shine{position:absolute;inset:0;background:linear-gradient(180deg,var(--rcg2,rgba(255,30,60,.05)) 0%,transparent 70%);pointer-events:none;z-index:0}
+.rank-ico{font-size:3rem;margin-bottom:10px;display:block;transition:transform .3s,filter .3s;position:relative;z-index:1}
+.rank-card:hover .rank-ico{transform:scale(1.15) translateY(-4px);filter:drop-shadow(0 0 18px var(--rc))}
+.rank-name{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;letter-spacing:.08em;position:relative;z-index:1}
+.rank-tag{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border:1px solid;display:inline-block;margin-top:7px;position:relative;z-index:1}
+.rank-perks{padding:20px 22px;flex:1}
+.perk{display:flex;align-items:flex-start;gap:9px;font-size:.71rem;color:var(--t2);line-height:1.5;margin-bottom:8px}
+.perk-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.rank-bottom{padding:16px 22px 22px;border-top:1px solid rgba(255,255,255,.06)}
+.rank-price{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;margin-bottom:12px;letter-spacing:.02em}
+.rank-price span{font-size:.65rem;color:var(--t3);font-family:'JetBrains Mono',monospace;font-weight:400}
+.rank-btn{width:100%;font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;letter-spacing:.12em;padding:13px;border:1px solid var(--rc);background:rgba(0,0,0,.15);color:var(--rc);cursor:none;transition:all .3s;position:relative;overflow:hidden}
+.rank-btn::before{content:'';position:absolute;inset:0;background:var(--rc);transform:scaleX(0);transform-origin:left;transition:transform .3s;z-index:-1}
+.rank-btn:hover{color:var(--bg)}.rank-btn:hover::before{transform:scaleX(1)}
+.rank-popular{position:absolute;top:0;right:0;font-size:.55rem;letter-spacing:.1em;padding:4px 12px;background:var(--rc);color:var(--bg);font-weight:700;text-transform:uppercase;z-index:6}
+.shop-note{text-align:center;margin-top:24px;font-size:.72rem;color:var(--t3);padding:14px;border:1px solid var(--b);background:rgba(255,30,60,.02)}
+.shop-note a{color:var(--a);text-decoration:none}.shop-note a:hover{text-decoration:underline}
+.team-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media(max-width:1100px){.team-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:840px){.team-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.team-grid{grid-template-columns:repeat(2,1fr)}}
+.tm{background:var(--s);border:1px solid var(--b);padding:20px 14px;text-align:center;position:relative;overflow:hidden;cursor:none;transition:transform .35s,box-shadow .35s,border-color .35s}
+.tm::before{content:'';position:absolute;inset:0;opacity:0;background:var(--tmg,radial-gradient(circle at 50% 0%,rgba(255,30,60,.07),transparent 70%));transition:opacity .3s}
+.tm:hover{transform:translateY(-7px);box-shadow:0 20px 50px var(--tms,rgba(255,30,60,.13));border-color:var(--tmc,var(--a))}
+.tm:hover::before{opacity:1}
+.tm.founder-card{grid-column:1/-1;display:flex;align-items:center;gap:28px;text-align:left;padding:24px 28px;background:linear-gradient(135deg,rgba(255,30,60,.04),transparent 55%)}
+.tm.founder-card .tm-av{flex-shrink:0;margin:0}
+.tm-av{width:60px;height:60px;margin:0 auto 12px;position:relative}
+.tm-av img{width:100%;height:100%;image-rendering:pixelated;transition:transform .35s}
+.tm:hover .tm-av img{transform:scale(1.1) translateY(-3px)}
+.tm-halo{position:absolute;inset:-5px;border-radius:50%;border:1.5px solid var(--tmc,var(--a));opacity:0;animation:halospin 3s linear infinite;transition:opacity .3s;pointer-events:none}
+.tm-halo::before{content:'';position:absolute;top:-3px;left:50%;width:5px;height:5px;background:var(--tmc,var(--a));border-radius:50%;transform:translateX(-50%)}
+@keyframes halospin{to{transform:rotate(360deg)}}
+.tm:hover .tm-halo{opacity:.5}
+.tm-role{font-size:.53rem;letter-spacing:.13em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--tmc,var(--a));color:var(--tmc,var(--a));margin-bottom:7px;display:inline-block}
+.tm-name{font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;color:var(--t);margin-bottom:3px;letter-spacing:.04em}
+.tm-mc{font-size:.6rem;color:var(--t3)}
+.tm-crown{position:absolute;top:8px;right:10px;font-size:.8rem;animation:crownbob 2.5s ease-in-out infinite}
+@keyframes crownbob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-4px) rotate(5deg)}}
+.tm-info{flex:1}
+.tm-fdesc{font-size:.72rem;color:var(--t2);margin-top:5px;line-height:1.6}
+.termwrap{border:1px solid var(--b);background:var(--s3);position:relative;overflow:hidden}
+.termwrap::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(255,30,60,.014) 27px,rgba(255,30,60,.014) 28px);pointer-events:none;z-index:0}
+.thdr{padding:12px 16px;background:var(--s2);border-bottom:1px solid var(--b);display:flex;align-items:center;gap:8px;position:relative;z-index:1}
+.td{width:11px;height:11px;border-radius:50%}
+.td.r{background:#ff5f56}.td.o{background:#ffbd2e}.td.g2{background:#27c93f}
+.ttitle{font-size:.68rem;color:var(--t3);letter-spacing:.1em;margin-left:8px}
+.tbody{padding:18px 16px 8px;font-size:.76rem;line-height:1.9;position:relative;z-index:1;min-height:260px;max-height:320px;overflow-y:auto}
+.tbody::-webkit-scrollbar{width:3px}.tbody::-webkit-scrollbar-thumb{background:rgba(255,30,60,.2);border-radius:2px}
+.tl{display:block;animation:tlin .12s ease both}
+@keyframes tlin{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.tp2{color:var(--a)}.tc2{color:var(--t)}.to2{color:var(--t3);padding-left:10px}.tok{color:var(--a2)}.twarn{color:var(--a3)}.terr{color:var(--red)}.tinfo{color:var(--a)}
+.tinrow{display:flex;align-items:center;gap:8px;padding:8px 16px 14px;border-top:1px solid var(--b);position:relative;z-index:1}
+.tinrow span{color:var(--a);font-size:.76rem;flex-shrink:0;white-space:nowrap}
+#tinput{background:transparent;border:none;outline:none;color:var(--t);font-family:'JetBrains Mono',monospace;font-size:.76rem;flex:1;caret-color:var(--a);cursor:none}
+.tcursor{width:8px;height:14px;background:var(--a);animation:blink 1s step-end infinite;flex-shrink:0}
+.fitem{padding:20px 22px;background:var(--s);border-left:2px solid transparent;transition:all .25s;cursor:none;display:flex;gap:14px;position:relative;overflow:hidden}
+.fitem::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,30,60,.03),transparent);transform:translateX(-100%);transition:transform .4s}
+.fitem:hover{background:var(--s2);border-left-color:var(--a)}.fitem:hover::after{transform:translateX(0)}
+.farr{color:var(--a);font-size:.85rem;padding-top:2px;flex-shrink:0;transition:transform .2s}.fitem:hover .farr{transform:translateX(4px)}
+.ftxt h4{font-size:.88rem;font-weight:700;color:var(--t);margin-bottom:3px}.ftxt p{font-size:.76rem;color:var(--t2);line-height:1.65}
+.bugsbox{border:1px solid rgba(255,30,60,.18);background:linear-gradient(135deg,rgba(255,30,60,.04),transparent 60%);padding:44px;position:relative;overflow:hidden}
+.bugsbox::before{content:'KNOWN_ISSUES.log';position:absolute;top:14px;right:20px;font-size:.6rem;color:rgba(255,30,60,.22);letter-spacing:.1em}
+.bhdr{display:flex;align-items:center;gap:16px;margin-bottom:26px}
+.bico{width:50px;height:50px;background:rgba(255,30,60,.1);border:1px solid rgba(255,30,60,.3);display:flex;align-items:center;justify-content:center;font-size:1.5rem;animation:bugshake 5s ease-in-out infinite;flex-shrink:0}
+@keyframes bugshake{0%,78%,100%{transform:none}80%{transform:rotate(-6deg)}82%{transform:rotate(6deg)}84%{transform:rotate(-3deg)}86%{transform:none}}
+.btitle2{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;color:var(--red);letter-spacing:.06em}
+.bsub{font-size:.77rem;color:var(--t2);margin-top:4px}
+.blines{font-size:.77rem;color:var(--t2);line-height:2;border-left:2px solid rgba(255,30,60,.3);padding-left:18px}
+.bw{color:var(--a3)}.bf{color:var(--a2)}
+.cgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--b);border:1px solid var(--b)}
+@media(max-width:900px){.cgrid{grid-template-columns:repeat(2,1fr)}}
+.ccard{background:var(--s);padding:28px 20px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;text-decoration:none;cursor:none;transition:background .3s,transform .3s}
+.ccard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cc,var(--a));transform:scaleX(0);transform-origin:left;transition:transform .35s}
+.ccard::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% -10%,var(--ccg,rgba(255,30,60,.06)),transparent 55%);opacity:0;transition:opacity .3s}
+.ccard:hover{background:var(--s2);transform:translateY(-4px)}.ccard:hover::before{transform:scaleX(1)}.ccard:hover::after{opacity:1}
+.ccard:hover .carr{transform:translateX(8px);color:var(--cc,var(--a))}.ccard:hover .cico{filter:drop-shadow(0 0 14px var(--cc,var(--a)));transform:scale(1.12)}
+.cico{color:var(--cc,var(--a));margin-bottom:6px;transition:all .3s;display:flex;align-items:center}
+.cname{font-family:'Orbitron',monospace;font-size:.88rem;font-weight:700;color:var(--t);letter-spacing:.04em}
+.chandle{font-size:.64rem;color:var(--cc,var(--a));opacity:.8}
+.cdesc{font-size:.73rem;color:var(--t2);line-height:1.6;flex:1}
+.carr{font-size:.88rem;color:var(--t3);transition:all .25s;margin-top:5px;display:inline-block}
+.pvstrip{position:relative;z-index:2;background:var(--s);border-top:1px solid var(--b);border-bottom:1px solid var(--b);padding:18px 48px;display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}
+.pvlbl{font-size:.63rem;color:var(--t3);letter-spacing:.14em;text-transform:uppercase}
+.pvval{font-size:.88rem;font-weight:700;padding:5px 13px;border:1px solid}
+.pvc{color:var(--a);border-color:rgba(255,30,60,.28);background:rgba(255,30,60,.04)}
+.pvg{color:var(--a2);border-color:rgba(255,30,60,.28);background:rgba(255,30,60,.04)}
+.pvr{color:#ff8c42;border-color:rgba(255,68,85,.35);background:rgba(255,68,85,.06)}
+.pvy{color:#ffd700;border-color:rgba(255,215,0,.3);background:rgba(255,215,0,.04)}
+.pvsep{color:var(--t3);opacity:.35}
+.wm{position:fixed;bottom:13px;left:50%;transform:translateX(-50%);z-index:500;font-size:.58rem;color:rgba(122,56,72,.38);letter-spacing:.15em;text-transform:uppercase;display:flex;align-items:center;gap:7px;pointer-events:none}
+.wm::before,.wm::after{content:'';width:22px;height:1px;background:rgba(122,56,72,.22)}
+.wm b{color:rgba(255,30,60,.5)}
+footer{position:relative;z-index:2;padding:36px 48px;border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.flogo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.1rem;color:var(--a);text-shadow:0 0 20px var(--glow)}
+.fcopy{font-size:.66rem;color:var(--t3);letter-spacing:.06em}.fcopy span{color:var(--a)}
+.ptc{position:fixed;border-radius:50%;pointer-events:none;z-index:1;opacity:0;animation:floatp linear infinite}
+@keyframes floatp{0%{opacity:0;transform:translateY(0)}10%{opacity:.7}90%{opacity:.1}100%{opacity:0;transform:translateY(-120vh) translateX(var(--drift,30px))}}
+#toast{position:fixed;bottom:26px;right:26px;z-index:300;padding:12px 20px;background:var(--s2);border:1px solid var(--a);font-size:.73rem;color:var(--a2);letter-spacing:.06em;opacity:0;transform:translateY(14px);transition:all .3s;pointer-events:none;box-shadow:0 4px 24px rgba(255,30,60,.14)}
+#toast::before{content:'✓  '}
+#toast.on{opacity:1;transform:none}
+
+/* ── THEME TOGGLE ── */
+.btheme{font-family:'JetBrains Mono',monospace;font-size:.9rem;padding:7px 10px;border:1px solid rgba(255,30,60,.35);background:transparent;cursor:none;transition:all .25s;color:var(--t3)}
+.btheme:hover{border-color:var(--a);color:var(--a)}
+body.light{--bg:#f5f0f0;--s:#fff0f0;--s2:#ffe8e8;--s3:#fde0e0;--b:rgba(255,30,60,.15);--t:#2a0808;--t2:#6a2828;--t3:#a84848;--glow:rgba(255,30,60,.3)}
+body.light #bgc{opacity:.03}
+body.light body::before{background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.02) 2px,rgba(0,0,0,.02) 4px)}
+body.light nav{background:rgba(245,240,240,.96)}
+body.light .termwrap,body.light .bugsbox{background:var(--s2)}
+body.light .tl{color:var(--t)}
+body.light #tinput{color:var(--t)}
+
+/* ── DISCORD WIDGET ── */
+.discord-widget-wrap{margin-top:36px;border:1px solid var(--b);overflow:hidden;background:var(--s)}
+.discord-widget-label{display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--s2);border-bottom:1px solid var(--b);font-size:.7rem;color:var(--t2);letter-spacing:.1em;text-transform:uppercase}
+.discord-widget-wrap iframe{display:block}
+
+/* ── NEW SHOP ── */
+.shop-cats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+.shop-cat-btn{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.12em;padding:9px 18px;border:1px solid var(--b);background:var(--s);color:var(--t3);cursor:none;transition:all .25s;position:relative;overflow:hidden}
+.shop-cat-btn::before{content:'';position:absolute;inset:0;background:var(--a);transform:scaleX(0);transform-origin:left;transition:transform .25s;z-index:-1}
+.shop-cat-btn.active{border-color:var(--a);color:var(--a)}
+.shop-cat-btn.active::before,.shop-cat-btn:hover::before{transform:scaleX(1)}
+.shop-cat-btn:hover{color:var(--bg);border-color:var(--a)}
+.shop-cat-btn.active:hover{color:var(--bg)}
+.shop-items-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:1000px){.shop-items-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.shop-items-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.shop-items-grid{grid-template-columns:1fr}}
+.shop-item{background:var(--s);border:1px solid var(--b);padding:22px 18px;position:relative;overflow:hidden;cursor:none;transition:transform .3s,box-shadow .3s,border-color .3s;display:flex;flex-direction:column;gap:10px}
+.shop-item::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,var(--si-glow,rgba(255,30,60,.07)),transparent 60%);opacity:0;transition:opacity .35s}
+.shop-item::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--si-c,var(--a));transform:scaleX(0);transform-origin:center;transition:transform .35s}
+.shop-item:hover{transform:translateY(-6px);box-shadow:0 18px 50px var(--si-shadow,rgba(255,30,60,.14));border-color:var(--si-c,var(--a))}
+.shop-item:hover::before{opacity:1}
+.shop-item:hover::after{transform:scaleX(1)}
+.shop-item:hover .si-ico{transform:scale(1.12);filter:drop-shadow(0 0 12px var(--si-c,var(--a)))}
+.si-ico{font-size:2.4rem;transition:transform .3s,filter .3s;display:block;line-height:1}
+.si-name{font-family:'Orbitron',monospace;font-size:.82rem;font-weight:700;color:var(--t);letter-spacing:.04em}
+.si-desc{font-size:.7rem;color:var(--t2);line-height:1.6;flex:1}
+.si-price{display:flex;align-items:center;gap:7px;margin-top:4px}
+.si-price-val{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;color:var(--si-c,var(--a))}
+.si-price-unit{font-size:.58rem;color:var(--t3);letter-spacing:.1em;text-transform:uppercase}
+.si-badge{font-size:.52rem;letter-spacing:.12em;padding:2px 8px;border:1px solid var(--si-c,var(--a));color:var(--si-c,var(--a));text-transform:uppercase;display:inline-block;margin-top:2px;transition:all .2s}
+.shop-item:hover .si-badge{background:var(--si-c,var(--a));color:var(--bg)}
+.shop-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--t3);font-size:.75rem;letter-spacing:.08em}
+</style>
+</head>
+<body>
+<canvas id="bgc"></canvas>
+<div id="cur"></div><div id="cr"></div>
+<div id="toast">IP kopiert!</div>
+<div class="wm">powered by <b>GT-DEV</b></div>
+
+<nav>
+  <div class="nlogo">GT-MC</div>
+  <ul class="nlinks">
+    <li><a href="#gamemodes">Gamemodes</a></li>
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#terminal">Terminal</a></li>
+    <li><a href="#community">Community</a></li>
+    <li><a href="#bewerben">Bewerben</a></li>
+    <li><a href="#report">Report</a></li>
+    <li><a href="#appeal">Appeal</a></li>
+  </ul>
+  <div class="nbtns">
+    <button class="btheme" id="themeBtn" onclick="toggleTheme()" title="Dark/Light Mode">🌙</button>
+    <a href="https://discord.gg/dNMWvtvHAG" target="_blank" class="bdc">
+      <svg width="14" height="11" viewBox="0 0 24 18" fill="currentColor"><path d="M20.317 1.492a19.84 19.84 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 1.492a.07.07 0 00-.032.027C.533 6.093-.32 10.56.099 14.971a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
+      DISCORD
+    </a>
+    <a href="#shop" class="bshop">⭐ SHOP</a>
+    <button class="bip" onclick="copyIP()">IP KOPIEREN</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hgrid"></div><div class="hg1"></div><div class="hg2"></div><div class="hg3"></div>
+  <div class="hcont">
+    <div class="hbadge"><span class="hdot"></span>Server Online — 9 Gamemodes aktiv</div>
+    <h1 class="htitle"><span class="ht-gt">GT</span><span class="ht-dash">-</span><span class="ht-mc">MC</span></h1>
+    <div class="hversion"><b>Java 1.21.1</b> &nbsp;·&nbsp; Bedrock kompatibel</div>
+    <p class="hsub">Kein normaler Server. Eine <span>Community</span>.</p>
+    <div class="hip-wrap">
+      <span class="iplbl">SERVER IP</span>
+      <span class="ipval">GT-MC.net</span>
+      <button class="ipcopy" id="ipbtn" onclick="copyIP()">KOPIEREN</button>
+    </div>
+  </div>
+  <div class="hscroll"><span>scroll</span><div class="sbar"></div></div>
+</section>
+
+<div class="tkwrap"><div class="tkinner">
+  <div class="tkitem"><span class="dk r"></span><b>ONLINE</b> — GT-MC.net</div>
+  <div class="tkitem"><span class="dk r"></span><b>VERSION</b> 1.21.1</div>
+  <div class="tkitem"><span class="dk g"></span><b>SKYBLOCK</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>BEDWARS</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>SKYWARS</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>DUELS</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>MMA</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>SIMPLE SMP</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>GTMC</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>KNOCKBACK FFA</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>EVENT SERVER</b> ONLINE</div>
+  <div class="tkitem"><span class="dk y"></span><b>SHOP</b> Ränge für 💎 Gems — VIP bis MASTER</div>
+  <div class="tkitem"><span class="dk o"></span><b>BUGS</b> werden gefixt — Dev Team aktiv</div>
+  <div class="tkitem"><span class="dk r"></span><b>DEV</b> GT-DEV</div>
+  <div class="tkitem"><span class="dk r"></span><b>ONLINE</b> — GT-MC.net</div>
+  <div class="tkitem"><span class="dk r"></span><b>VERSION</b> 1.21.1</div>
+  <div class="tkitem"><span class="dk g"></span><b>SKYBLOCK</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>BEDWARS</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>SKYWARS</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>DUELS</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>MMA</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>SIMPLE SMP</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>GTMC</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>KNOCKBACK FFA</b> ONLINE</div>
+  <div class="tkitem"><span class="dk g"></span><b>EVENT SERVER</b> ONLINE</div>
+  <div class="tkitem"><span class="dk y"></span><b>SHOP</b> Ränge für 💎 Gems — VIP bis MASTER</div>
+  <div class="tkitem"><span class="dk o"></span><b>BUGS</b> werden gefixt — Dev Team aktiv</div>
+  <div class="tkitem"><span class="dk r"></span><b>DEV</b> GT-DEV</div>
+</div></div>
+
+<div class="sec" id="gamemodes">
+  <div class="rv"><div class="stag">// gamemodes</div><div class="stitle">Was du <span class="ca">spielen</span> kannst</div></div>
+  <div class="gmgrid rv" id="gm-grid"></div>
+</div>
+
+<div class="sec" id="shop">
+  <div class="rv">
+    <div class="stag">// shop</div>
+    <div class="stitle">GT-MC <span class="ca">Shop</span></div>
+  </div>
+  <div class="shop-cats rv" id="shopCats"></div>
+  <div class="shop-items-wrap rv" id="shopItemsWrap">
+    <div class="shop-items-grid" id="shopItemsGrid"></div>
+  </div>
+</div>
+
+<div class="sec" id="team">
+  <div class="rv"><div class="stag">// team</div><div class="stitle">Das <span class="cg">Team</span> hinter GT-MC</div></div>
+  <div class="team-grid" id="team-grid"></div>
+</div>
+
+<div class="sec" id="terminal">
+  <div class="rv"><div class="stag">// interactive terminal</div><div class="stitle">Schreib was <span class="ca">rein</span></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px" class="rv">
+    <div class="termwrap">
+      <div class="thdr"><div class="td r"></div><div class="td o"></div><div class="td g2"></div><span class="ttitle">gt-mc — bash</span></div>
+      <div class="tbody" id="tout">
+        <span class="tl"><span class="tp2">root@gt-mc</span>:<span class="tinfo">~</span>$ <span class="tc2">./welcome.sh</span></span>
+        <span class="tl"><span class="tok">[GT-MC]</span> <span class="to2">Willkommen!</span></span>
+        <span class="tl"><span class="tok">[GT-MC]</span> <span class="to2">Tippe <b style="color:var(--a)">help</b> für alle Befehle.</span></span>
+        <span class="tl"><span class="to2" style="color:#2a0a0a">────────────────────────────────────</span></span>
+      </div>
+      <div class="tinrow"><span class="tp2">root@gt-mc:~$</span><input id="tinput" type="text" placeholder="befehl eingeben..." autocomplete="off" spellcheck="false"><div class="tcursor"></div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div class="fitem rvr"><span class="farr">→</span><div class="ftxt"><h4>Schöne Lobby</h4><p>Detailliert gebaute Hauptlobby mit einzigartigem Design.</p></div></div>
+      <div class="fitem rvr" style="transition-delay:.1s"><span class="farr">→</span><div class="ftxt"><h4>Ständige Entwicklung</h4><p>Dev-Team arbeitet täglich an Fixes &amp; neuen Features.</p></div></div>
+      <div class="fitem rvr" style="transition-delay:.2s"><span class="farr">→</span><div class="ftxt"><h4>9 Gamemodes</h4><p>Von Skyblock bis MMA — für jeden Spielertyp was dabei.</p></div></div>
+      <div class="fitem rvr" style="transition-delay:.3s"><span class="farr">→</span><div class="ftxt"><h4>Version 1.21.1</h4><p>Aktuelle Version, Java &amp; Bedrock kompatibel.</p></div></div>
+      <div class="fitem rvr" style="transition-delay:.4s"><span class="farr">→</span><div class="ftxt"><h4>Aktive Community</h4><p>Reddit, Discord, YouTube, Twitch — wir sind überall.</p></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec" style="padding-top:0">
+  <div class="bugsbox rv">
+    <div class="bhdr"><div class="bico">🐛</div><div><div class="btitle2">Known Issues</div><div class="bsub">Transparenz ist uns wichtig — hier der aktuelle Status</div></div></div>
+    <div class="blines">
+      <span class="tl"><span class="bw">⚠ STATUS</span>  Es gibt noch einige Bugs auf dem Server.</span>
+      <span class="tl"><span class="bf">✓ ACTION</span>  Dev-Team arbeitet <b>ständig &amp; aktiv</b> an Fixes.</span>
+      <span class="tl"><span class="bf">✓ COMM</span>&nbsp;&nbsp; Updates laufen über Discord &amp; Reddit.</span>
+      <span class="tl"><span class="bw">⚠ NOTE</span>&nbsp;&nbsp; Bugs direkt im Spiel oder auf Discord melden.</span>
+      <span class="tl">&nbsp;</span>
+      <span class="tl">Ehrlichkeit ist uns wichtig. Wir verstecken nichts — wir lösen es. 💙</span>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="community">
+  <div class="rv"><div class="stag">// community</div><div class="stitle">Find uns <span class="cp">überall</span></div></div>
+  <div class="cgrid rv">
+    <a href="https://www.reddit.com/r/GT_MC/" target="_blank" class="ccard" style="--cc:#ff4500;--ccg:rgba(255,69,0,.08)">
+      <div class="cico"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.23.094.361.361 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg></div>
+      <div class="cname">Reddit</div><div class="chandle">r/GT_MC</div>
+      <div class="cdesc">Diskutiere, teile Clips &amp; bleib über Updates informiert.</div><div class="carr">→</div>
+    </a>
+    <a href="https://discord.gg/dNMWvtvHAG" target="_blank" class="ccard" style="--cc:#5865f2;--ccg:rgba(88,101,242,.08)">
+      <div class="cico"><svg width="26" height="20" viewBox="0 0 24 18" fill="currentColor"><path d="M20.317 1.492a19.84 19.84 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 1.492a.07.07 0 00-.032.027C.533 6.093-.32 10.56.099 14.971a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg></div>
+      <div class="cname">Discord</div><div class="chandle">discord.gg/dNMWvtvHAG</div>
+      <div class="cdesc">Support, Shop, News &amp; Community-Chat auf unserem Server.</div><div class="carr">→</div>
+    </a>
+    <a href="https://www.youtube.com/@LFT10-GTMC" target="_blank" class="ccard" style="--cc:#ff0000;--ccg:rgba(255,0,0,.07)">
+      <div class="cico"><svg width="28" height="20" viewBox="0 0 24 17" fill="currentColor"><path d="M23.495 2.205a3.02 3.02 0 0 0-2.122-2.136C19.505 0 12 0 12 0S4.495 0 2.627.069a3.02 3.02 0 0 0-2.122 2.136C0 4.069 0 8.035 0 8.035s0 3.966.505 5.83a3.02 3.02 0 0 0 2.122 2.136C4.495 16.07 12 16.07 12 16.07s7.505 0 9.373-.069a3.02 3.02 0 0 0 2.122-2.136C24 12.001 24 8.035 24 8.035s0-3.966-.505-5.83zM9.609 11.459V4.611l6.264 3.424-6.264 3.424z"/></svg></div>
+      <div class="cname">YouTube</div><div class="chandle">@LFT10-GTMC</div>
+      <div class="cdesc">Videos, Highlights &amp; Server-Content auf unserem Kanal.</div><div class="carr">→</div>
+    </a>
+    <a href="https://www.twitch.tv/dercamperlft" target="_blank" class="ccard" style="--cc:#9147ff;--ccg:rgba(145,71,255,.08)">
+      <div class="cico"><svg width="20" height="24" viewBox="0 0 24 28" fill="currentColor"><path d="M2.149 0L.537 4.119v19.64h5.94V27h3.224l3.22-3.242h4.852l6.46-6.461V0H2.149zm19.164 16.612l-3.76 3.76H12l-3.22 3.219v-3.22H3.762V1.612h17.551v15zm-3.76-9.671v8.06h-1.61V6.94h1.61zm-4.312 0v8.06h-1.61V6.94h1.61z"/></svg></div>
+      <div class="cname">Twitch</div><div class="chandle">dercamperlft</div>
+      <div class="cdesc">Live-Streams vom Server — schau vorbei &amp; chat mit.</div><div class="carr">→</div>
+    </a>
+  </div>
+  <div class="discord-widget-wrap rv">
+    <div class="discord-widget-label">
+      <svg width="18" height="14" viewBox="0 0 24 18" fill="currentColor" style="color:#5865f2"><path d="M20.317 1.492a19.84 19.84 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 1.492a.07.07 0 00-.032.027C.533 6.093-.32 10.56.099 14.971a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
+      Live Discord Community
+    </div>
+    <iframe src="https://discord.com/widget?id=1391523712058134728&theme=dark" width="100%" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+  </div>
+</div>
+
+<div class="pvstrip">
+  <span class="pvlbl">Server IP</span><span class="pvval pvc" onclick="copyIP()" style="cursor:none">GT-MC.net</span>
+  <span class="pvsep">//</span>
+  <span class="pvlbl">Version</span><span class="pvval pvg">1.21.1</span>
+  <span class="pvsep">//</span>
+  <span class="pvlbl">Powered by</span><span class="pvval pvr">GT-DEV</span>
+  <span class="pvsep">//</span>
+  <span class="pvlbl">Gamemodes</span><span class="pvval pvy">9 aktiv</span>
+</div>
+
+<footer>
+  <div class="flogo">GT-MC</div>
+  <div class="fcopy">Kein offizielles Mojang-Produkt — Made with ❤️ &nbsp;·&nbsp; <span>gt-mc</span></div>
+</footer>
+
+<script>
+const CONFIG = {
+  gamemodes: [
+    { name:'Event Server',   ico:'🎪', desc:'Regelmäßige Events, Turniere & Sonderaktionen. Sei dabei, wenn es zählt.',       badge:'seasonal',    color:'#ff6b35' },
+    { name:'MMA',            ico:'🥊', desc:'Mixed Martial Arts PvP — zeige deine Kampfkünste im Ring.',                       badge:'pvp',          color:'#ff8c42' },
+    { name:'Skyblock',       ico:'🏝️', desc:'Baue dein Imperium aus dem Nichts. Kleine Insel, große Träume.',                  badge:'survival',     color:'#ff6b35' },
+    { name:'Simple SMP',     ico:'🌍', desc:'Klassisches Survival Multiplayer. Echte Minecraft-Erfahrung ohne Kompromisse.',   badge:'vanilla+',     color:'#ff8c42' },
+    { name:'GTMC',           ico:'⚡', desc:'Unser einzigartiger Gamemode. Unser Herzstück — discover it yourself.',           badge:'exclusive',    color:'#ff4488' },
+    { name:'Duels',          ico:'⚔️', desc:'1v1 bis zum Sieg. Verschiedene Arenen & Kits. Wer ist der Beste?',               badge:'competitive',  color:'#ffd700' },
+    { name:'Bedwars',        ico:'🛏️', desc:'Verteidige dein Bett, zerstöre die anderen. Team-Taktik trifft PvP.',            badge:'team',         color:'#ff2255' },
+    { name:'Skywars',        ico:'🌤️', desc:'Plünder, baue Brücken, eliminiere alle. Last man standing.',                     badge:'solo',         color:'#ff7744' },
+    { name:'Knockback FFA',  ico:'👊', desc:'Kein Schaden, nur Knockback. Wirf alle von der Plattform.',                      badge:'ffa',          color:'#ff9500' },
+  ],
+  ranks: [
+    { name:'VIP',    ico:'🥉', gems:'500',    color:'#d4889a', tag:'STARTER',   popular:false, perks:['Farbiges [VIP] Prefix im Chat','/fly in der Lobby','2 X Shards','/sign auf smp'] },
+    { name:'PREMIUM',ico:'🌿', gems:'1.200',  color:'#ff8c42', tag:'PREMIUM',   popular:false, perks:['Alles aus VIP','Custom name collor','Eigener Chat-Effekt','Prio join','Discord PREMIUM-Rang'] },
+    { name:'GOLD',   ico:'🥇', gems:'2.500',  color:'#ffd700', tag:'GOLD',      popular:true,  perks:['Alles aus PREMIUM','Prio support','6 extra /home Slots [SMP]','Partikel-Effekt','Monatliche Crate-Keys'] },
+    { name:'PLATIN', ico:'💠', gems:'5.000',  color:'#ff6688', tag:'PLATIN',    popular:false, perks:['Alles aus GOLD','8 extra /home Slots [SMP]','Beta zugrif','/nick Befehl','PLATIN-Only Events','Wöchentliche Crate-Keys'] },
+    { name:'ELITE',  ico:'⚡', gems:'10.000', color:'#ff4488', tag:'ELITE',     popular:false, perks:['Alles aus PLATIN','Eigenes Partikel-Trail','Unbegrenzte /home Slots [SMP]','ELITE-Only Events','Direkter Kontakt zum Team [SUP]','Tägliche Crate-Keys'] },
+    { name:'MASTER', ico:'👑', gems:'25.000', color:'#ff6b35', tag:'LEGENDARY', popular:false, perks:['Alles aus ELITE','✦ MASTER ✦ Prefix in Rot','Eigener Join-Sound','Join Mesage','Fly SMP','Sonderangebote im Shop','VIP-Support Kanal'] },
+    { name:'CREATOR',ico:'📷', gems:'ONLY APLY',color:'#ff6b35',tag:'MEDIA',   popular:false, perks:['Alles aus ELITE','Force Lobby start','Mute & Prio report','Creator tag','Stream add','Global server chat','7 tage vip gift'] },
+  ],
+  team: [
+    { name:'Felix',   mc:'LFT10',          role:'👑 FOUNDER', color:'#ff6b35', crown:'👑', founder:true, founderDesc:'Founder von GT-MC — hat alles aufgebaut & am Laufen gehalten.' },
+    { name:'Nero',    mc:'DroppedbyxNero', role:'MANAGEMENT', color:'#ffd700', crown:'⭐' },
+    { name:'Angelo',  mc:'AngeloGXMR',     role:'OWNER',      color:'#ff4488', crown:'👑', dashBorder:true },
+    { name:'Jan',     mc:'jan1653',         role:'CO-OWNER',   color:'#ff8c42', crown:'' },
+    { name:'No-name', mc:'4tiv',           role:'ADMIN',      color:'#ff2244', crown:'' },
+    { name:'Nico',    mc:'ronny_9n',        role:'MODERATOR',  color:'#ff6b35', crown:'' },
+    { name:'Mr None', mc:'3quh',           role:'HELPER',     color:'#d4889a', crown:'' },
+    { name:'Matteo',  mc:'matteoGhgyt',     role:'CREATOR',    color:'#ff4488', crown:'' },
+    { name:'Stynx',   mc:'blue_bc',         role:'CREATOR',    color:'#ff4488', crown:'' },
+    { name:'Sammy',   mc:'cassiusrox',      role:'BUILDER',    color:'#ff7755', crown:'' },
+    { name:'corni',   mc:'corni_1',         role:'TESTER',     color:'#ff9500', crown:'' },
+  ],
+};
+
+function hexToRgb(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return isNaN(r)?'255,30,60':`${r},${g},${b}`}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function mcFallback(mc,color,size){const letter=esc(mc[0].toUpperCase());return `data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22${size}%22 height=%22${size}%22%3E%3Crect fill=%22%231a0a0a%22 width=%22${size}%22 height=%22${size}%22/%3E%3Ctext x=%22${size/2}%22 y=%22${Math.round(size*.65)}%22 text-anchor=%22middle%22 fill=%22${encodeURIComponent(color)}%22 font-size=%22${Math.round(size*.4)}%22 font-family=%22monospace%22%3E${letter}%3C/text%3E%3C/svg%3E`}
+
+function renderGamemodes(){
+  const grid=document.getElementById('gm-grid');
+  grid.innerHTML=CONFIG.gamemodes.map((g,i)=>{const rgb=hexToRgb(g.color);return `<div class="gmc" style="--ca:${g.color};--cg:rgba(${rgb},.07)"><div class="gmnum">// ${String(i+1).padStart(2,'0')}</div><span class="gmico">${g.ico}</span><div class="gmname">${esc(g.name)}</div><div class="gmdesc">${esc(g.desc)}</div><span class="gmbadge">${esc(g.badge)}</span></div>`}).join('');
+  grid.querySelectorAll('.gmc').forEach(c=>{c.addEventListener('click',e=>{const r=c.getBoundingClientRect(),rip=document.createElement('span');rip.style.cssText=`position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.04);left:${e.clientX-r.left-100}px;top:${e.clientY-r.top-100}px;transform:scale(0);animation:rippanim .6s ease forwards;pointer-events:none;z-index:10`;c.appendChild(rip);setTimeout(()=>rip.remove(),700)})});
+}
+
+function renderRanks(){
+  const grid=document.getElementById('shop-grid'),note=document.getElementById('shop-note');
+  grid.innerHTML=CONFIG.ranks.map(r=>{const rgb=hexToRgb(r.color);const perksHtml=r.perks.map(p=>`<div class="perk"><div class="perk-dot" style="background:${r.color}"></div><span>${esc(p)}</span></div>`).join('');return `<div class="rank-card" style="--rc:${r.color};--rcg:rgba(${rgb},.06);--rcg2:rgba(${rgb},.04);--rcs:rgba(${rgb},.17)">${r.popular?`<div class="rank-popular" style="background:${r.color};color:#0a0303">BELIEBT</div>`:''}<div class="rank-top"><div class="rank-shine"></div><span class="rank-ico">${r.ico}</span><div class="rank-name" style="color:${r.color}">${esc(r.name)}</div><div class="rank-tag" style="border-color:${r.color};color:${r.color}">${esc(r.tag)}</div></div><div class="rank-perks">${perksHtml}</div><div class="rank-bottom"><div class="rank-price" style="color:${r.color}">💎 ${esc(r.gems)} <span>Gems</span></div><button class="rank-btn" onclick="buyRank('${esc(r.name)}')">KAUFEN</button></div></div>`}).join('');
+  note.textContent='💎 Gems bekommst du durch Spielen auf dem Server. Viel Spaß beim Grinden!';
+}
+
+function renderTeam(){
+  const grid=document.getElementById('team-grid');let delay=0;
+  grid.innerHTML=CONFIG.team.map(m=>{const rgb=hexToRgb(m.color);const fb=mcFallback(m.mc,m.color,m.founder?72:60);const size=m.founder?72:60;const bs=m.dashBorder?'border-style:dashed;':'';
+    if(m.founder)return `<div class="tm founder-card rv on" style="--tmc:${m.color};--tmg:radial-gradient(circle at 20% 50%,rgba(${rgb},.09),transparent 60%);--tms:rgba(${rgb},.2)">${m.crown?`<div class="tm-crown">${m.crown}</div>`:''}<div class="tm-halo" style="border-color:${m.color}"></div><div class="tm-av" style="width:${size}px;height:${size}px;flex-shrink:0;margin:0"><img src="https://mc-heads.net/avatar/${encodeURIComponent(m.mc)}/${size}" alt="${esc(m.name)}" onerror="this.src='${fb}'"></div><div class="tm-info"><div class="tm-role" style="border-color:${m.color};color:${m.color}">${esc(m.role)}</div><div class="tm-name" style="color:${m.color};font-size:1rem">${esc(m.name)}</div><div class="tm-mc">// ${esc(m.mc)}</div>${m.founderDesc?`<div class="tm-fdesc">${esc(m.founderDesc)}</div>`:''}</div></div>`;
+    const d=delay;delay+=0.05;return `<div class="tm rv" style="--tmc:${m.color};--tmg:radial-gradient(circle at 50% 0%,rgba(${rgb},.08),transparent 70%);--tms:rgba(${rgb},.14);transition-delay:${d.toFixed(2)}s">${m.crown?`<div class="tm-crown">${m.crown}</div>`:''}<div class="tm-halo" style="border-color:${m.color};${bs}"></div><div class="tm-av"><img src="https://mc-heads.net/avatar/${encodeURIComponent(m.mc)}/${size}" alt="${esc(m.name)}" onerror="this.src='${fb}'"></div><div class="tm-role" style="border-color:${m.color};color:${m.color};${bs}">${esc(m.role)}</div><div class="tm-name">${esc(m.name)}</div><div class="tm-mc">// ${esc(m.mc)}</div></div>`;
+  }).join('');
+  grid.querySelectorAll('.tm:not(.founder-card)').forEach(c=>{c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`translateY(-7px) perspective(500px) rotateX(${-y*8}deg) rotateY(${x*8}deg)`;c.style.transition='box-shadow .3s,border-color .3s'});c.addEventListener('mouseleave',()=>{c.style.transform='';c.style.transition='all .4s ease'})});
+}
+
+const cur=document.getElementById('cur'),cr=document.getElementById('cr');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function ar(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(ar)})();
+function refreshCursorTargets(){document.querySelectorAll('a,button,.gmc,.tm,.rank-card,.ccard').forEach(el=>{el.addEventListener('mouseenter',()=>{cr.style.width='58px';cr.style.height='58px';cr.style.borderColor='rgba(255,30,60,.5)';cur.style.transform='translate(-50%,-50%) scale(1.8)';cur.style.background='var(--a2)'});el.addEventListener('mouseleave',()=>{cr.style.width='40px';cr.style.height='40px';cr.style.borderColor='rgba(255,30,60,.5)';cur.style.transform='translate(-50%,-50%) scale(1)';cur.style.background='var(--a)'})});}
+
+const cv=document.getElementById('bgc'),ctx=cv.getContext('2d');
+let cols,drops;
+function initM(){cv.width=innerWidth;cv.height=innerHeight;cols=Math.floor(cv.width/18);drops=Array(cols).fill(1)}
+function drawM(){ctx.fillStyle='rgba(10,3,3,.06)';ctx.fillRect(0,0,cv.width,cv.height);ctx.font='13px JetBrains Mono,monospace';const ch='01GTMC#$[]<>/アイウエオカキ';drops.forEach((y,i)=>{const c=ch[Math.floor(Math.random()*ch.length)];ctx.fillStyle=i%3===0?'#ff6b35':i%3===1?'#ff6b35':'#ff4488';ctx.globalAlpha=Math.random()*.6+.1;ctx.fillText(c,i*18,y*18);if(y*18>cv.height&&Math.random()>.975)drops[i]=0;drops[i]++});ctx.globalAlpha=1}
+initM();window.addEventListener('resize',initM);setInterval(drawM,55);
+
+function sp(){const p=document.createElement('div');p.className='ptc';const cs=['#ff6b35','#ff6b35','#ff4488','#ffd700','#ff8c42'];const sz=1+Math.random()*2.5;p.style.cssText=`left:${Math.random()*100}vw;bottom:-4px;width:${sz}px;height:${sz}px;background:${cs[Math.floor(Math.random()*cs.length)]};box-shadow:0 0 6px currentColor;animation-duration:${4+Math.random()*8}s;--drift:${(Math.random()-.5)*140}px`;document.body.appendChild(p);setTimeout(()=>p.remove(),13000)}
+setInterval(sp,350);
+
+function copyIP(){navigator.clipboard.writeText('GT-MC.net').then(()=>{const t=document.getElementById('toast'),b=document.getElementById('ipbtn');t.classList.add('on');if(b){b.textContent='KOPIERT ✓';b.classList.add('ok')}setTimeout(()=>{t.classList.remove('on');if(b){b.textContent='KOPIEREN';b.classList.remove('ok')}},2200)})}
+function buyRank(rank){window.open('https://discord.gg/dNMWvtvHAG','_blank')}
+
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.07});
+function reObserve(){document.querySelectorAll('.rv,.rvr').forEach(el=>obs.observe(el))}
+
+const tout=document.getElementById('tout'),tin=document.getElementById('tinput');
+const CMDS={
+  help:()=>[{c:'tinfo',t:'──── Befehle ─────────────────────────'},{c:'tok',t:'  ip / version / gamemodes / team'},{c:'tok',t:'  shop / discord / reddit'},{c:'tok',t:'  youtube / twitch / bugs / status'},{c:'tok',t:'  bewerben — Bewerbung öffnen'},{c:'tok',t:'  clear — Terminal leeren'},{c:'tinfo',t:'──────────────────────────────────────'}],
+  ip:()=>[{c:'tinfo',t:'→ GT-MC.net'},{c:'to2',t:'  Java & Bedrock Edition'}],
+  version:()=>[{c:'tinfo',t:'→ Java 1.21.1'},{c:'to2',t:'  Bedrock kompatibel'}],
+  gamemodes:()=>{const lines=[{c:'tinfo',t:`── ${CONFIG.gamemodes.length} Gamemodes ──────────────────`}];CONFIG.gamemodes.forEach((g,i)=>lines.push({c:'tok',t:`  ${String(i+1).padStart(2,'0')}  ${g.ico} ${g.name}  [${g.badge}]`}));return lines},
+  team:()=>{const lines=[{c:'tinfo',t:'── GT-MC Team ──────────────────────────'}];CONFIG.team.forEach(m=>lines.push({c:'tok',t:`  ${m.name.padEnd(12)} │ ${m.role.replace(/[👑⭐]/g,'').trim().padEnd(11)} │ ${m.mc}`}));return lines},
+  shop:()=>{const lines=[{c:'tinfo',t:'── Rang Shop ────────────────────────'}];CONFIG.ranks.forEach(r=>lines.push({c:'tok',t:`  ${r.ico} ${r.name.padEnd(8)}  💎 ${r.gems} Gems`}));lines.push({c:'to2',t:'  Gems durch Spielen verdienen!'});return lines},
+  discord:()=>[{c:'tinfo',t:'→ https://discord.gg/dNMWvtvHAG'}],
+  reddit:()=>[{c:'tinfo',t:'→ https://www.reddit.com/r/GT_MC/'}],
+  youtube:()=>[{c:'tinfo',t:'→ https://www.youtube.com/@LFT10-GTMC'}],
+  twitch:()=>[{c:'tinfo',t:'→ https://www.twitch.tv/dercamperlft'}],
+  bugs:()=>[{c:'twarn',t:'⚠  Bekannte Bugs vorhanden'},{c:'tok',t:'✓  Dev-Team arbeitet aktiv daran'},{c:'to2',t:'   Bug melden: Discord'}],
+  bewerben:()=>[{c:'tinfo',t:'── Offene Positionen ─────────────'},{c:'tok',t:'  🎧 SUPPORT    │ Spieler helfen'},{c:'tok',t:'  🛡️ MODERATOR  │ Server moderieren'},{c:'tok',t:'  ⚙️ ADMIN      │ Server verwalten'},{c:'tok',t:'  💻 DEVELOPER  │ Plugins entwickeln'},{c:'tok',t:'  📷 CREATOR    │ Content erstellen'},{c:'to2',t:'  → Abschnitt #bewerben auf der Website'}],
+  status:()=>[{c:'tok',t:'● ONLINE  GT-MC.net'},{c:'tok',t:'● VER     1.21.1'},{c:'tok',t:`● MODES   ${CONFIG.gamemodes.length} aktiv`},{c:'tok',t:`● TEAM    ${CONFIG.team.length} Mitglieder`},{c:'tok',t:`● RÄNGE   ${CONFIG.ranks.length} verfügbar`},{c:'tinfo',t:'● DEV     GT-DEV'}],
+  clear:()=>{tout.innerHTML='';return[]},
+};
+function addTLine(cls,txt){const s=document.createElement('span');s.className='tl '+cls;s.textContent=txt;tout.appendChild(s);tout.scrollTop=9999}
+tin.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const raw=tin.value.trim();tin.value='';if(!raw)return;const prompt=document.createElement('span');prompt.className='tl';prompt.innerHTML=`<span class="tp2">root@gt-mc:~$</span> <span class="tc2">${raw.replace(/</g,'&lt;')}</span>`;tout.appendChild(prompt);const key=raw.toLowerCase().replace(/\s/g,'');if(CMDS[key]){const lines=CMDS[key]();lines.forEach((l,i)=>setTimeout(()=>addTLine(l.c,l.t),i*45))}else{setTimeout(()=>addTLine('terr',`bash: ${raw}: command not found`),45);setTimeout(()=>addTLine('to2','Tippe "help" für alle Befehle.'),90)}tout.scrollTop=9999});
+
+renderGamemodes();renderTeam();reObserve();refreshCursorTargets();
+
+/* ════ DARK/LIGHT MODE ════ */
+function toggleTheme(){
+  const btn=document.getElementById('themeBtn');
+  document.body.classList.toggle('light');
+  const isLight=document.body.classList.contains('light');
+  btn.textContent=isLight?'🌙':'☀️';
+  localStorage.setItem('gtmc-theme',isLight?'light':'dark');
+}
+(function(){
+  if(localStorage.getItem('gtmc-theme')==='light'){
+    document.body.classList.add('light');
+    const btn=document.getElementById('themeBtn');
+    if(btn)btn.textContent='🌙';
+  }
+})();
+
+/* ════ NEW SHOP ════ */
+const SHOP_DATA={
+  raenge:{label:'Ränge',icon:'👑',color:'#ffd700',items:[
+    {ico:'🥉',name:'VIP',desc:'Farbiges Prefix, /fly in Lobby, 2x Shards, /sign auf SMP.',price:500},
+    {ico:'🌿',name:'PREMIUM',desc:'Alles aus VIP + Custom Namecolor, Prio Join, Discord Rang.',price:1200},
+    {ico:'🥇',name:'GOLD',desc:'Alles aus PREMIUM + Prio Support, 6 /home Slots, Partikel.',price:2500},
+    {ico:'💠',name:'PLATIN',desc:'Alles aus GOLD + Beta Zugang, /nick, Platin-Only Events.',price:5000},
+    {ico:'⚡',name:'ELITE',desc:'Alles aus PLATIN + Partikel Trail, unlimitierte /home Slots.',price:10000},
+    {ico:'👑',name:'MASTER',desc:'Alles aus ELITE + Join Sound, Fly auf SMP, VIP-Support.',price:25000},
+  ]},
+  upranks:{label:'UP Ranks',icon:'⬆️',color:'#ff8c42',items:[
+    {ico:'🔺',name:'Rank Boost I',desc:'Verdiene für 7 Tage 25% mehr Shards in allen Gamemodes.',price:300},
+    {ico:'🔺🔺',name:'Rank Boost II',desc:'Verdiene für 7 Tage 50% mehr Shards in allen Gamemodes.',price:600},
+    {ico:'🔺🔺🔺',name:'Rank Boost III',desc:'Verdiene für 7 Tage doppelte Shards überall.',price:1000},
+    {ico:'🏆',name:'XP Boost',desc:'14 Tage lang 2x XP auf allen Gamemodes.',price:750},
+    {ico:'🎯',name:'Drop Boost',desc:'7 Tage erhöhte Drop-Rate bei Crates & Events.',price:400},
+  ]},
+  moderation:{label:'Moderation',icon:'🛡️',color:'#ff4488',items:[
+    {ico:'🔕',name:'Mute Schutz',desc:'Schützt dich 7 Tage vor temporären Mutes durch andere Spieler.',price:800},
+    {ico:'🛡️',name:'Report Shield',desc:'Verhindert für 3 Tage, dass Reports gegen dich direkt eskalieren.',price:500},
+    {ico:'⚡',name:'Prio Report',desc:'Deine Reports werden bevorzugt vom Mod-Team bearbeitet — 30 Tage.',price:600},
+    {ico:'🔍',name:'Mod Insight',desc:'Sieh den Status deiner Reports und Beschwerden im Discord.',price:300},
+    {ico:'🏛️',name:'Appeal Fast Track',desc:'Dein Ban-Appeal wird innerhalb von 24h bearbeitet, nicht 72h.',price:1200},
+  ]},
+  keys:{label:'Keys',icon:'🔑',color:'#a855f7',items:[
+    {ico:'🗝️',name:'Common Key',desc:'Öffnet eine Common Crate — enthält Items, Shards & Boosts.',price:150},
+    {ico:'🔑',name:'Rare Key',desc:'Öffnet eine Rare Crate mit seltenen Cosmetics & Rängen.',price:500},
+    {ico:'🏅',name:'Epic Key',desc:'Öffnet eine Epic Crate mit exklusiven Items & Rang-Teilen.',price:1200},
+    {ico:'💎',name:'Legendary Key',desc:'Öffnet die Legendary Crate — höchste Drop-Chance für Ränge.',price:3000},
+    {ico:'🌟',name:'Event Key',desc:'Nur bei Events verfügbar — enthält limitierte Cosmetics.',price:2000},
+    {ico:'🎁',name:'Mystery Box',desc:'Überraschungsinhalt — könnte alles sein. Viel Glück!',price:999},
+  ]},
+  booster:{label:'Booster',icon:'🚀',color:'#a855f7',items:[
+    {ico:'💨',name:'Speed Booster',desc:'Erhöhe deine Bewegungsgeschwindigkeit für 1 Stunde.',price:200},
+    {ico:'🛡️',name:'Shield Booster',desc:'Nimm 24 Stunden lang 20% weniger Schaden auf PvP-Servern.',price:350},
+    {ico:'💰',name:'Coin Booster',desc:'2x Coins für 3 Stunden in allen Gamemodes.',price:450},
+    {ico:'✨',name:'Glow Booster',desc:'Leuchte 24 Stunden in deiner Wunschfarbe.',price:180},
+    {ico:'🌍',name:'Server Booster',desc:'Booste den ganzen Server — alle profitieren für 1 Stunde.',price:800},
+    {ico:'🎆',name:'Party Booster',desc:'3 Stunden lang doppelte Rewards für dich & 4 Freunde.',price:600},
+  ]},
+};
+
+let shopActiveCat='raenge';
+
+function renderShop(){
+  const cats=document.getElementById('shopCats');
+  const grid=document.getElementById('shopItemsGrid');
+  if(!cats||!grid)return;
+  // render category buttons
+  cats.innerHTML=Object.entries(SHOP_DATA).map(([k,c])=>
+    `<button class="shop-cat-btn${k===shopActiveCat?' active':''}" onclick="setShopCat('${k}')">${c.icon} ${c.label}</button>`
+  ).join('');
+  // render items
+  renderShopItems();
+}
+
+function setShopCat(k){
+  shopActiveCat=k;
+  document.querySelectorAll('.shop-cat-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.shop-cat-btn').forEach(b=>{
+    if(b.textContent.includes(SHOP_DATA[k].label))b.classList.add('active');
+  });
+  renderShopItems();
+}
+
+function renderShopItems(){
+  const grid=document.getElementById('shopItemsGrid');
+  const cat=SHOP_DATA[shopActiveCat];
+  if(!cat){grid.innerHTML='<div class="shop-empty">Keine Items gefunden.</div>';return;}
+  const rgb=hexToRgb(cat.color);
+  grid.innerHTML=cat.items.map(item=>`
+    <div class="shop-item" style="--si-c:${cat.color};--si-glow:rgba(${rgb},.08);--si-shadow:rgba(${rgb},.15)">
+      <span class="si-ico">${item.ico}</span>
+      <div class="si-name">${esc(item.name)}</div>
+      <div class="si-desc">${esc(item.desc)}</div>
+      <div class="si-price">
+        <span class="si-price-val">💎 ${item.price.toLocaleString('de-DE')}</span>
+        <span class="si-price-unit">Shards</span>
+      </div>
+      <span class="si-badge">${SHOP_DATA[shopActiveCat].label}</span>
+    </div>`).join('');
+}
+
+
+/* ════ REPORT & APPEAL WEBHOOKS ════ */
+const WH_REPORT='https://discord.com/api/webhooks/1493156149854470294/-nmFbk6_tefDNgdDoDhXlAd0zBcQIAN_k061mkk4miOuzgH5WMkdgWqwV4pVS9SIn9ob';
+const WH_APPEAL='https://discord.com/api/webhooks/1493156655062450326/bZCOMT4ZwBRti6itXmvWqmJ8Y7YRzJMfmkkaA7Qe8DkBOa9kI-3M3h96aYFtKG_7B7OE';
+
+/* ── REPORT ── */
+async function submitReport(){
+  const own=document.getElementById('rep_own_mc')?.value.trim();
+  const owdc=document.getElementById('rep_own_dc')?.value.trim();
+  const target=document.getElementById('rep_target')?.value.trim();
+  const server=document.getElementById('rep_server')?.value;
+  const when=document.getElementById('rep_when')?.value.trim();
+  const desc=document.getElementById('rep_desc')?.value.trim();
+  const rules=Array.from(document.querySelectorAll('.ra-cb:checked')).map(c=>c.value);
+  const err=document.getElementById('rep_err');
+  err.classList.remove('show');
+  if(!own||!owdc||!target||!server||server==='— wählen —'||!when||!desc||rules.length===0){
+    err.classList.add('show');return;
+  }
+  const btn=document.getElementById('rep_btn');
+  btn.disabled=true;btn.classList.add('loading');btn.textContent='WIRD GESENDET';
+  const proof=document.getElementById('rep_proof')?.value.trim()||'—';
+  const witness=document.getElementById('rep_witness')?.value.trim()||'—';
+  const payload={
+    username:'GT-MC Report System',
+    embeds:[{
+      title:'🚨 Neuer Spieler-Report',color:16711740,
+      fields:[
+        {name:'Reporter (IGN)',value:own,inline:true},
+        {name:'Reporter (Discord)',value:owdc,inline:true},
+        {name:'Gemeldeter Spieler',value:target,inline:true},
+        {name:'Server / Gamemode',value:server,inline:true},
+        {name:'Zeitpunkt',value:when,inline:true},
+        {name:'\u200b',value:'\u200b',inline:true},
+        {name:'Regelverstoß',value:rules.join(', ')},
+        {name:'Beschreibung',value:desc.slice(0,1024)},
+        {name:'Beweise',value:proof.slice(0,512)},
+        {name:'Zeugen',value:witness},
+      ],
+      footer:{text:'GT-MC Report • '+new Date().toLocaleString('de-DE')}
+    }]
+  };
+  try{
+    const r=await fetch(WH_REPORT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(r.ok||r.status===204){
+      document.querySelector('#rep-form .ra-fields').style.display='none';
+      btn.style.display='none';
+      document.querySelector('#rep-form .ra-note').style.display='none';
+      document.querySelector('#rep-form .ra-intro').style.display='none';
+      document.getElementById('rep-form').innerHTML+='<div class="ra-success"><span class="ra-succ-ico">✅</span><div class="ra-succ-title">Report eingegangen!</div><div class="ra-succ-sub">Dein Report gegen <strong style="color:var(--a)">'+target+'</strong> wurde an das Mod-Team gesendet.<br>Das Team prüft den Fall und handelt entsprechend. Danke!</div><button class="ra-succ-btn" onclick="location.reload()">NEUEN REPORT SENDEN</button></div>';
+    }else throw new Error('HTTP '+r.status);
+  }catch(e){
+    btn.disabled=false;btn.classList.remove('loading');btn.textContent='🚨 REPORT ABSENDEN';
+    err.textContent='Fehler beim Senden: '+e.message+'. Bitte erneut versuchen.';err.classList.add('show');
+  }
+}
+
+/* ── APPEAL TAB SYSTEM ── */
+const APPEAL_TYPES={
+  unban:{label:'Unban Appeal',ico:'🔓',color:'#ff1e3c',
+    desc:'Du wurdest auf GT-MC gebannt und möchtest Einspruch einlegen. Erkläre ehrlich warum du entbannt werden solltest.',
+    fields:[
+      {id:'mc',label:'Dein Minecraft-Name',ph:'Dein gebannter IGN',req:true},
+      {id:'dc',label:'Dein Discord',ph:'username',req:true},
+      {id:'ban_reason',label:'Angezeigter Bangrund',ph:'Was steht beim Einloggen?',req:true},
+      {id:'ban_date',label:'Wann wurdest du gebannt?',ph:'Datum / Uhrzeit (ca.)',req:true},
+      {id:'ban_admin',label:'Wer hat gebannt? (falls bekannt)',ph:'Teamname oder "unbekannt"'},
+      {id:'did_it',label:'Hast du gegen die Regeln verstoßen?',type:'radio',opts:['Nein, ich war es nicht','Ja, aber es war ein Versehen','Ja, ich bereue es'],req:true},
+      {id:'explanation',label:'Deine Erklärung / Begründung',ph:'Erkläre deine Situation ausführlich...',ta:true,req:true},
+      {id:'proof',label:'Beweise / Screenshots (Links)',ph:'Optional aber hilfreich...'},
+    ]},
+  unwarn:{label:'Unwarn Antrag',ico:'⚠️',color:'#ffd700',
+    desc:'Du möchtest eine Verwarnung anfechten, die zu Unrecht oder unverhältnismäßig ausgesprochen wurde.',
+    fields:[
+      {id:'mc',label:'Dein Minecraft-Name',ph:'Dein IGN',req:true},
+      {id:'dc',label:'Dein Discord',ph:'username',req:true},
+      {id:'warn_reason',label:'Grund der Verwarnung',ph:'Was wurde als Grund angegeben?',req:true},
+      {id:'warn_date',label:'Wann wurdest du verwarnt?',ph:'Datum / Uhrzeit',req:true},
+      {id:'warn_admin',label:'Wer hat verwarnt?',ph:'Teamname oder "unbekannt"'},
+      {id:'why_wrong',label:'Warum ist die Verwarnung falsch?',ph:'Erkläre warum sie ungerechtfertigt ist...',ta:true,req:true},
+      {id:'proof',label:'Beweise / Screenshots',ph:'Links zu Beweisen...'},
+    ]},
+  unmute:{label:'Unmute Antrag',ico:'🔊',color:'#ff8c42',
+    desc:'Du wurdest gemuted und möchtest den Mute anfechten oder um vorzeitige Aufhebung bitten.',
+    fields:[
+      {id:'mc',label:'Dein Minecraft-Name',ph:'Dein IGN',req:true},
+      {id:'dc',label:'Dein Discord',ph:'username',req:true},
+      {id:'mute_reason',label:'Grund des Mutes',ph:'Was wurde als Grund angegeben?',req:true},
+      {id:'mute_dur',label:'Wie lange bist du gemuted?',ph:'z.B. 1 Stunde / permanent'},
+      {id:'mute_admin',label:'Wer hat gemuted?',ph:'Teamname oder "unbekannt"'},
+      {id:'why_wrong',label:'Warum sollte der Mute aufgehoben werden?',ph:'Deine Begründung...',ta:true,req:true},
+      {id:'proof',label:'Beweise',ph:'Optional...'},
+    ]},
+  ipban:{label:'IP-Ban Appeal',ico:'🌐',color:'#ff4488',
+    desc:'Deine IP-Adresse wurde gebannt. Dies passiert häufig bei mehrfachen Verstößen oder automatisch durch das System.',
+    fields:[
+      {id:'mc',label:'Betroffener Minecraft-Name',ph:'IGN',req:true},
+      {id:'dc',label:'Dein Discord',ph:'username',req:true},
+      {id:'ip_info',label:'Haben andere Personen an deiner IP gespielt?',type:'radio',opts:['Ja, Familienmitglied','Ja, Mitbewohner','Nein, nur ich'],req:true},
+      {id:'ban_reason',label:'Angezeigter Bangrund (falls sichtbar)',ph:'Was siehst du beim Verbinden?'},
+      {id:'ban_date',label:'Seit wann ist die IP gesperrt?',ph:'Datum ca.',req:true},
+      {id:'explanation',label:'Deine Erklärung',ph:'Erkläre die Situation ausführlich...',ta:true,req:true},
+      {id:'other_accounts',label:'Andere Accounts an dieser IP?',ph:'IGNs auflisten oder "keine"'},
+      {id:'proof',label:'Beweise',ph:'Optional...'},
+    ]},
+  netban:{label:'Net-Ban Appeal',ico:'🔒',color:'#d4889a',
+    desc:'Ein Netzwerk-Ban betrifft alle Accounts und IPs, die mit deinem Account in Verbindung stehen.',
+    fields:[
+      {id:'mc',label:'Primärer Minecraft-Name',ph:'Haupt-IGN',req:true},
+      {id:'dc',label:'Dein Discord',ph:'username',req:true},
+      {id:'all_accounts',label:'Alle betroffenen Accounts',ph:'IGN1, IGN2, IGN3...',req:true},
+      {id:'ban_reason',label:'Grund des Net-Bans',ph:'Was wurde dir mitgeteilt?',req:true},
+      {id:'ban_date',label:'Datum des Net-Bans',ph:'Datum / Uhrzeit',req:true},
+      {id:'explanation',label:'Deine Erklärung',ph:'Sehr detailliert — Net-Bans sind ernst...',ta:true,req:true},
+      {id:'regret',label:'Bereust du dein Verhalten?',type:'radio',opts:['Ja, vollständig','Teilweise','Ich sehe keinen Regelverstoß'],req:true},
+      {id:'proof',label:'Beweise / Entlastung',ph:'Alles was hilft...'},
+    ]},
+};
+
+let appealActive='unban';
+
+function setAppealTab(type){
+  appealActive=type;
+  document.querySelectorAll('.ra-tab[id^="ap-tab"]').forEach(t=>t.classList.remove('active'));
+  document.getElementById('ap-tab-'+type)?.classList.add('active');
+  renderAppealForm();
+}
+
+function renderAppealForm(){
+  const t=APPEAL_TYPES[appealActive];
+  const body=document.getElementById('ap-body');
+  if(!body)return;
+  const fieldsHtml=t.fields.map(f=>{
+    const uid='ap_'+appealActive+'_'+f.id;
+    const req=f.req?'<b> *</b>':'';
+    let inner='';
+    if(f.type==='radio'){
+      inner='<div class="ra-check-group">'+f.opts.map((o,i)=>
+        `<input type="radio" class="ra-cb" name="${uid}" id="${uid}r${i}" value="${o}"><label class="ra-cbl" for="${uid}r${i}">${o}</label>`
+      ).join('')+'</div>';
+    } else if(f.ta){
+      inner=`<textarea class="ra-textarea" id="${uid}" placeholder="${f.ph||''}"></textarea>`;
+    } else {
+      inner=`<input class="ra-input" id="${uid}" type="text" placeholder="${f.ph||''}" autocomplete="off">`;
+    }
+    return `<div class="ra-field full"><label class="ra-label">${f.label}${req}</label>${inner}</div>`;
+  }).join('');
+
+  body.innerHTML=`
+    <div class="ra-intro">
+      <span class="ra-intro-ico">${t.ico}</span>
+      <div>
+        <div class="ra-intro-title">${t.label}</div>
+        <div class="ra-intro-sub">${t.desc}</div>
+      </div>
+    </div>
+    <div class="ra-fields">${fieldsHtml}</div>
+    <div class="ra-error" id="ap_err">Bitte fülle alle Pflichtfelder aus!</div>
+    <button class="ra-submit" id="ap_btn" onclick="submitAppeal('${appealActive}')">📨 APPEAL ABSENDEN</button>
+    <div class="ra-note">Appeals werden innerhalb von 24–72 Stunden bearbeitet. Sei geduldig und respektvoll.</div>`;
+}
+
+async function submitAppeal(type){
+  const t=APPEAL_TYPES[type];
+  const err=document.getElementById('ap_err');
+  err.classList.remove('show');
+  // collect + validate
+  const vals={};let valid=true;
+  t.fields.forEach(f=>{
+    const uid='ap_'+type+'_'+f.id;
+    let v='';
+    if(f.type==='radio'){const rb=document.querySelector(`input[name="${uid}"]:checked`);v=rb?rb.value:'';}
+    else{const el=document.getElementById(uid);v=el?el.value.trim():'';}
+    vals[f.id]=v;
+    if(f.req&&!v)valid=false;
+  });
+  if(!valid){err.classList.add('show');return;}
+  const btn=document.getElementById('ap_btn');
+  btn.disabled=true;btn.classList.add('loading');btn.textContent='WIRD GESENDET';
+  const colorMap={unban:16711740,unwarn:16766720,unmute:16750658,ipban:16722056,netban:13927594};
+  const embedFields=t.fields.map(f=>({name:f.label,value:(vals[f.id]||'—').slice(0,1024),inline:!f.ta&&(vals[f.id]||'').length<80}));
+  const payload={
+    username:'GT-MC Appeal System',
+    embeds:[{
+      title:`${t.ico} Neuer ${t.label}`,
+      color:colorMap[type]||16711740,
+      description:`**IGN:** ${vals.mc||'—'}
+**Discord:** ${vals.dc||'—'}`,
+      fields:embedFields.slice(0,25),
+      footer:{text:'GT-MC Appeal • '+new Date().toLocaleString('de-DE')}
+    }]
+  };
+  try{
+    const r=await fetch(WH_APPEAL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(r.ok||r.status===204){
+      document.getElementById('ap-body').innerHTML='<div class="ra-success"><span class="ra-succ-ico">✅</span><div class="ra-succ-title">Appeal eingegangen!</div><div class="ra-succ-sub">Dein <strong style="color:var(--a)">' +t.label+'</strong> wurde an das Team gesendet.<br>Wir melden uns innerhalb von 24–72h über Discord. Danke für deine Geduld!</div><button class="ra-succ-btn" onclick="setAppealTab(\''+type+'\')">NEUEN APPEAL SENDEN</button></div>';
+    }else throw new Error('HTTP '+r.status);
+  }catch(e){
+    btn.disabled=false;btn.classList.remove('loading');btn.textContent='📨 APPEAL ABSENDEN';
+    err.textContent='Fehler: '+e.message+'. Bitte erneut versuchen.';err.classList.add('show');
+  }
+}
+
+// Init appeal form on load
+document.addEventListener('DOMContentLoaded',()=>{renderAppealForm();});
+
+renderShop();
+</script>
+
+
+<!-- ═══════════════════════════ REPORT ═══════════════════════════ -->
+<div class="sec" id="report">
+  <div class="rv">
+    <div class="stag">// spieler melden</div>
+    <div class="stitle">Spieler <span class="ca">reporten</span></div>
+  </div>
+  <div class="report-wrap rv">
+    <div class="ra-tabs">
+      <button class="ra-tab active" onclick="setTab('report','rep-form')">🚨 SPIELER REPORTEN</button>
+    </div>
+    <div class="ra-body" id="rep-form">
+      <div class="ra-intro">
+        <span class="ra-intro-ico">🚨</span>
+        <div>
+          <div class="ra-intro-title">Spieler melden</div>
+          <div class="ra-intro-sub">Melde regelwidrige Spieler direkt an unser Mod-Team. Fülle alle Felder gewissenhaft aus — falsche Reports können bestraft werden.</div>
+        </div>
+      </div>
+      <div class="ra-fields">
+        <div class="ra-row">
+          <div class="ra-field">
+            <label class="ra-label">Dein Minecraft-Name <b>*</b></label>
+            <input class="ra-input" id="rep_own_mc" type="text" placeholder="Dein IGN" autocomplete="off">
+          </div>
+          <div class="ra-field">
+            <label class="ra-label">Dein Discord <b>*</b></label>
+            <input class="ra-input" id="rep_own_dc" type="text" placeholder="username" autocomplete="off">
+          </div>
+        </div>
+        <div class="ra-row">
+          <div class="ra-field">
+            <label class="ra-label">Gemeldeter Spieler (IGN) <b>*</b></label>
+            <input class="ra-input" id="rep_target" type="text" placeholder="IGN des Spielers" autocomplete="off">
+          </div>
+          <div class="ra-field">
+            <label class="ra-label">Server / Gamemode <b>*</b></label>
+            <select class="ra-select" id="rep_server">
+              <option>— wählen —</option>
+              <option>Skyblock</option><option>Bedwars</option><option>Skywars</option>
+              <option>MMA</option><option>Duels</option><option>GTMC</option>
+              <option>Simple SMP</option><option>Knockback FFA</option>
+              <option>Event Server</option><option>Lobby</option><option>Discord</option>
+            </select>
+          </div>
+        </div>
+        <div class="ra-field full">
+          <label class="ra-label">Regelverstoß <b>*</b></label>
+          <div class="ra-check-group" id="rep_rule_group">
+            <input type="checkbox" class="ra-cb" id="rv1" value="Cheating/Hacking"><label for="rv1" class="ra-cbl">⚡ Cheating/Hacking</label>
+            <input type="checkbox" class="ra-cb" id="rv2" value="Beleidigung/Hate"><label for="rv2" class="ra-cbl">💢 Beleidigung/Hate</label>
+            <input type="checkbox" class="ra-cb" id="rv3" value="Spam"><label for="rv3" class="ra-cbl">💬 Spam</label>
+            <input type="checkbox" class="ra-cb" id="rv4" value="Bug-Abuse"><label for="rv4" class="ra-cbl">🐛 Bug-Abuse</label>
+            <input type="checkbox" class="ra-cb" id="rv5" value="Griefing (SMP)"><label for="rv5" class="ra-cbl">⛏️ Griefing (SMP)</label>
+            <input type="checkbox" class="ra-cb" id="rv6" value="Werbung"><label for="rv6" class="ra-cbl">📢 Werbung</label>
+            <input type="checkbox" class="ra-cb" id="rv7" value="Teaming (verboten)"><label for="rv7" class="ra-cbl">🤝 Teaming</label>
+            <input type="checkbox" class="ra-cb" id="rv8" value="Toxisches Verhalten"><label for="rv8" class="ra-cbl">☠️ Toxisch</label>
+            <input type="checkbox" class="ra-cb" id="rv9" value="Stehlen (SMP)"><label for="rv9" class="ra-cbl">🏴‍☠️ Stehlen</label>
+            <input type="checkbox" class="ra-cb" id="rv10" value="Anderes"><label for="rv10" class="ra-cbl">❓ Anderes</label>
+          </div>
+        </div>
+        <div class="ra-field full">
+          <label class="ra-label">Wann ist es passiert? <b>*</b></label>
+          <input class="ra-input" id="rep_when" type="text" placeholder="z.B. heute 15:30 Uhr, vor 2 Stunden...">
+        </div>
+        <div class="ra-field full">
+          <label class="ra-label">Beschreibung des Vorfalls <b>*</b></label>
+          <textarea class="ra-textarea" id="rep_desc" placeholder="Beschreibe was passiert ist — je detaillierter desto besser..."></textarea>
+        </div>
+        <div class="ra-field full">
+          <label class="ra-label">Beweise (Screenshot/Video-Links)</label>
+          <textarea class="ra-textarea" id="rep_proof" placeholder="Imgur, YouTube, Gyazo Links... (optional aber empfohlen)" style="min-height:65px"></textarea>
+        </div>
+        <div class="ra-field full">
+          <label class="ra-label">Zeugen (IGNs, optional)</label>
+          <input class="ra-input" id="rep_witness" type="text" placeholder="IGN1, IGN2...">
+        </div>
+      </div>
+      <div class="ra-error" id="rep_err">Bitte fülle alle Pflichtfelder aus!</div>
+      <button class="ra-submit" id="rep_btn" onclick="submitReport()">🚨 REPORT ABSENDEN</button>
+      <div class="ra-note">Falsche Reports können zu einer Verwarnung deines Accounts führen. Nur echte Verstöße melden.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ APPEAL ═══════════════════════════ -->
+<div class="sec" id="appeal">
+  <div class="rv">
+    <div class="stag">// appeals & anträge</div>
+    <div class="stitle">Unban / <span class="ca">Appeal</span></div>
+  </div>
+  <div class="report-wrap rv">
+    <div class="ra-tabs">
+      <button class="ra-tab active" id="ap-tab-unban" onclick="setAppealTab('unban')">🔓 UNBAN</button>
+      <button class="ra-tab" id="ap-tab-unwarn" onclick="setAppealTab('unwarn')">⚠️ UNWARN</button>
+      <button class="ra-tab" id="ap-tab-unmute" onclick="setAppealTab('unmute')">🔊 UNMUTE</button>
+      <button class="ra-tab" id="ap-tab-ipban" onclick="setAppealTab('ipban')">🌐 IP-BAN</button>
+      <button class="ra-tab" id="ap-tab-netban" onclick="setAppealTab('netban')">🔒 NET-BAN</button>
+    </div>
+    <div class="ra-body" id="ap-body"></div>
+  </div>
+</div>
+
+<style>
+/* ── REPORT / APPEAL ── */
+.report-wrap{border:1px solid var(--b);background:var(--s);overflow:hidden}
+.ra-tabs{display:flex;background:var(--s2);border-bottom:1px solid var(--b);flex-wrap:wrap}
+.ra-tab{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:.1em;padding:13px 18px;border:none;border-right:1px solid var(--b);background:transparent;color:var(--t3);cursor:none;transition:all .25s;position:relative}
+.ra-tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--a);transform:scaleX(0);transition:transform .25s}
+.ra-tab.active{color:var(--a)}.ra-tab.active::after{transform:scaleX(1)}
+.ra-tab:hover:not(.active){color:var(--t2)}
+.ra-body{padding:28px 28px 24px}
+.ra-intro{display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:var(--s2);border:1px solid var(--b);margin-bottom:24px}
+.ra-intro-ico{font-size:2rem;flex-shrink:0}
+.ra-intro-title{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700;color:var(--t);margin-bottom:4px;letter-spacing:.04em}
+.ra-intro-sub{font-size:.71rem;color:var(--t2);line-height:1.65}
+.ra-fields{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
+.ra-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.ra-row{grid-template-columns:1fr}}
+.ra-field{display:flex;flex-direction:column;gap:6px}
+.ra-field.full{grid-column:1/-1}
+.ra-label{font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:var(--t3)}
+.ra-label b{color:var(--a)}
+.ra-input,.ra-select,.ra-textarea{width:100%;background:var(--s3);border:1px solid rgba(255,30,60,.15);color:var(--t);font-family:'JetBrains Mono',monospace;font-size:.75rem;padding:10px 13px;outline:none;transition:border-color .2s,box-shadow .2s;cursor:none}
+.ra-input::placeholder,.ra-textarea::placeholder{color:var(--t3);opacity:.6}
+.ra-input:focus,.ra-select:focus,.ra-textarea:focus{border-color:var(--a);box-shadow:0 0 0 2px rgba(255,30,60,.08)}
+.ra-textarea{resize:vertical;min-height:90px;line-height:1.65}
+.ra-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4 4.5-4' stroke='%23ff1e3c' stroke-width='1.4' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:11px}
+.ra-select option{background:#1a0a0a}
+.ra-check-group{display:flex;flex-wrap:wrap;gap:7px}
+.ra-cb{display:none}
+.ra-cbl{font-size:.65rem;letter-spacing:.06em;padding:7px 12px;border:1px solid rgba(255,30,60,.15);color:var(--t3);cursor:none;transition:all .2s;user-select:none}
+.ra-cb:checked+.ra-cbl{border-color:var(--a);color:var(--a);background:rgba(255,30,60,.07)}
+.ra-cbl:hover{border-color:rgba(255,30,60,.4);color:var(--t)}
+.ra-error{background:rgba(255,30,60,.07);border:1px solid rgba(255,30,60,.25);color:var(--a);font-size:.7rem;padding:10px 14px;display:none;margin-bottom:12px}
+.ra-error.show{display:block}
+.ra-submit{width:100%;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:.14em;padding:14px;border:none;background:var(--a);color:var(--bg);cursor:none;transition:all .3s;position:relative;overflow:hidden;margin-bottom:12px}
+.ra-submit:hover{background:var(--a2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,30,60,.3)}
+.ra-submit:disabled{opacity:.5;transform:none;pointer-events:none}
+.ra-submit.loading::after{content:'';display:inline-block;width:11px;height:11px;border:2px solid var(--bg);border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;margin-left:10px;vertical-align:middle}
+.ra-note{font-size:.64rem;color:var(--t3);line-height:1.6;border-left:2px solid rgba(255,30,60,.2);padding-left:12px}
+.ra-success{text-align:center;padding:40px 20px;animation:fup .4s ease both}
+.ra-succ-ico{font-size:3rem;margin-bottom:12px;display:block;animation:ringPop .4s ease both}
+.ra-succ-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:var(--a);margin-bottom:8px;letter-spacing:.04em}
+.ra-succ-sub{font-size:.73rem;color:var(--t2);line-height:1.7}
+.ra-succ-btn{margin-top:20px;font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.12em;padding:10px 24px;border:1px solid var(--a);background:transparent;color:var(--a);cursor:none;transition:all .3s}
+.ra-succ-btn:hover{background:var(--a);color:var(--bg)}
+</style>
+
+<!-- ═══════════════════════ BEWERBEN ═══════════════════════ -->
+<div class="sec" id="bewerben">
+  <div class="rv"><div class="stag">// bewerbungen</div>
+  <div class="stitle">Werde Teil des <span class="ca">Teams</span></div></div>
+  <div class="apply-grid rv" id="apply-grid"></div>
+  <div class="apply-form-wrap" id="applyWrap">
+    <div class="af-header">
+      <div class="af-hdr-left">
+        <span class="af-ico" id="afIco"></span>
+        <div>
+          <div class="af-title" id="afTitle"></div>
+          <div class="af-subtitle" id="afSubtitle"></div>
+        </div>
+      </div>
+      <button class="af-close" onclick="closeApply()">✕ SCHLIESSEN</button>
+    </div>
+    <div class="af-progress-row">
+      <div class="af-prog-track"><div class="af-prog-fill" id="afFill"></div></div>
+      <span class="af-prog-label" id="afProgLabel"></span>
+    </div>
+    <div class="af-dots-row" id="afDots"></div>
+    <div class="af-body" id="afBody"></div>
+    <div class="af-footer">
+      <button class="af-back" id="afBack" onclick="afNav(-1)">← ZURÜCK</button>
+      <div class="af-footer-center" id="afFooterCenter"></div>
+      <button class="af-next" id="afNext" onclick="afNav(1)">WEITER →</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* APPLY GRID */
+.apply-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media(max-width:1100px){.apply-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.apply-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:380px){.apply-grid{grid-template-columns:1fr}}
+.ap-card{background:var(--s);border:1px solid var(--b);padding:28px 16px 22px;position:relative;overflow:hidden;cursor:none;transition:transform .35s,box-shadow .35s,border-color .35s;display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px}
+.ap-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,var(--cc),transparent 65%);opacity:0;transition:opacity .4s}
+.ap-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--cr,var(--a));transform:scaleX(0);transform-origin:center;transition:transform .4s}
+.ap-card.sel{border-color:var(--cr,var(--a));box-shadow:0 0 0 1px var(--cr,var(--a))}
+.ap-card.sel::after,.ap-card:hover::after{transform:scaleX(1)}
+.ap-card.sel::before,.ap-card:hover::before{opacity:1}
+.ap-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px var(--cs,rgba(255,30,60,.18));border-color:var(--cr,var(--a))}
+.ap-card:hover .ap-ico{transform:scale(1.2) translateY(-3px);filter:drop-shadow(0 0 14px var(--cr,var(--a)))}
+.ap-ico{font-size:2.6rem;transition:transform .4s,filter .4s;position:relative;z-index:1}
+.ap-name{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:900;letter-spacing:.1em;color:var(--t);position:relative;z-index:1}
+.ap-badge{font-size:.5rem;letter-spacing:.14em;padding:2px 8px;border:1px solid var(--cr,var(--a));color:var(--cr,var(--a));text-transform:uppercase;position:relative;z-index:1}
+.ap-desc{font-size:.68rem;color:var(--t2);line-height:1.6;position:relative;z-index:1;flex:1}
+.ap-count{font-size:.57rem;color:var(--t3);letter-spacing:.08em;position:relative;z-index:1}
+.ap-btn{margin-top:6px;width:100%;font-family:'JetBrains Mono',monospace;font-size:.64rem;font-weight:700;letter-spacing:.12em;padding:9px;border:1px solid var(--cr,var(--a));background:transparent;color:var(--cr,var(--a));cursor:none;transition:all .3s;position:relative;z-index:1}
+.ap-btn:hover,.ap-card:hover .ap-btn{background:var(--cr,var(--a));color:var(--bg)}
+
+/* APPLY FORM WRAP */
+.apply-form-wrap{max-height:0;overflow:hidden;opacity:0;margin-top:0;transition:max-height .55s cubic-bezier(.4,0,.2,1),opacity .4s ease,margin-top .4s ease}
+.apply-form-wrap.open{max-height:4000px;opacity:1;margin-top:28px}
+.af-header{display:flex;align-items:center;justify-content:space-between;padding:20px 28px 18px;background:var(--s2);border-bottom:1px solid var(--b);position:relative;overflow:hidden}
+.af-header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ac,var(--a)),transparent);animation:navscan 3s linear infinite}
+.af-hdr-left{display:flex;align-items:center;gap:14px}
+.af-ico{font-size:2rem;flex-shrink:0}
+.af-title{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:900;letter-spacing:.07em;color:var(--ac,var(--a))}
+.af-subtitle{font-size:.6rem;color:var(--t3);letter-spacing:.1em;margin-top:2px}
+.af-close{font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.1em;padding:8px 13px;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--t3);cursor:none;transition:all .2s}
+.af-close:hover{border-color:var(--a);color:var(--a)}
+/* progress */
+.af-progress-row{display:flex;align-items:center;gap:14px;padding:12px 28px 10px;background:var(--s2);border-bottom:1px solid rgba(255,255,255,.04)}
+.af-prog-track{flex:1;height:4px;background:rgba(255,255,255,.05);overflow:hidden}
+.af-prog-fill{height:100%;background:var(--ac,var(--a));transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px var(--ac,var(--a));width:0%}
+.af-prog-label{font-size:.58rem;color:var(--t3);letter-spacing:.1em;white-space:nowrap;min-width:40px;text-align:right}
+/* dots */
+.af-dots-row{display:flex;gap:5px;justify-content:center;padding:10px 28px 0;background:var(--s2);border-bottom:1px solid var(--b)}
+.af-dot{height:4px;border-radius:2px;background:rgba(255,255,255,.07);transition:all .35s;cursor:none}
+.af-dot.done{background:rgba(255,255,255,.2);width:14px}
+.af-dot.active{background:var(--ac,var(--a));box-shadow:0 0 8px var(--ac,var(--a));width:28px}
+.af-dot.todo{width:14px}
+/* body */
+.af-body{padding:30px 28px 12px;background:var(--s)}
+@media(max-width:600px){.af-body{padding:22px 16px 10px}}
+/* step anim */
+.af-step{display:none;flex-direction:column;gap:18px}
+.af-step.active{display:flex;animation:afIn .32s cubic-bezier(.25,.46,.45,.94) both}
+.af-step.back{animation:afBack .32s cubic-bezier(.25,.46,.45,.94) both}
+@keyframes afIn{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes afBack{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+.af-step-title{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;color:var(--ac,var(--a));letter-spacing:.07em;padding-bottom:14px;border-bottom:1px solid var(--b)}
+/* fields */
+.fg{display:flex;flex-direction:column;gap:6px}
+.fl{font-size:.59rem;letter-spacing:.13em;text-transform:uppercase;color:var(--t3)}
+.fl b{color:var(--ac,var(--a))}
+.fi,.fs,.ft{width:100%;background:var(--s3);border:1px solid rgba(255,30,60,.13);color:var(--t);font-family:'JetBrains Mono',monospace;font-size:.75rem;padding:10px 13px;outline:none;transition:border-color .2s,box-shadow .2s;cursor:none}
+.fi::placeholder,.ft::placeholder{color:var(--t3);opacity:.55}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--ac,var(--a));box-shadow:0 0 0 2px rgba(255,30,60,.08)}
+.ft{resize:vertical;min-height:78px;line-height:1.6}
+.fs{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4 4.5-4' stroke='%23ff1e3c' stroke-width='1.4' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:11px}
+.fs option{background:#1a0a0a}
+.frg,.fcg{display:flex;flex-wrap:wrap;gap:6px}
+.fr,.fc{display:none}
+.frl,.fcl{font-size:.65rem;letter-spacing:.07em;padding:7px 12px;border:1px solid rgba(255,30,60,.13);color:var(--t3);cursor:none;transition:all .2s;user-select:none}
+.fr:checked+.frl,.fc:checked+.fcl{border-color:var(--ac,var(--a));color:var(--ac,var(--a));background:rgba(255,30,60,.07)}
+.frl:hover,.fcl:hover{border-color:rgba(255,30,60,.35);color:var(--t)}
+.fsc{display:flex;gap:4px;align-items:center}
+.fsl{font-size:.57rem;color:var(--t3);flex-shrink:0;width:48px;line-height:1.3}
+.fsl:last-child{text-align:right}
+.fsb{flex:1}
+.fsr{display:none}
+.fsbl{font-size:.66rem;padding:8px 3px;border:1px solid rgba(255,30,60,.13);color:var(--t3);cursor:none;transition:all .2s;text-align:center;user-select:none;display:block}
+.fsr:checked+.fsbl{border-color:var(--ac,var(--a));color:var(--ac,var(--a));background:rgba(255,30,60,.08)}
+.fsbl:hover{border-color:rgba(255,30,60,.35);color:var(--t)}
+/* review */
+.af-review{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+@media(max-width:540px){.af-review{grid-template-columns:1fr}}
+.af-rev-sec{grid-column:1/-1;font-family:'Orbitron',monospace;font-size:.62rem;color:var(--ac,var(--a));letter-spacing:.1em;padding:7px 0 3px;border-bottom:1px solid rgba(255,30,60,.12)}
+.af-rev-item{background:var(--s3);border:1px solid var(--b);padding:9px 13px}
+.af-rev-item.full{grid-column:1/-1}
+.af-rev-q{font-size:.54rem;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.af-rev-a{font-size:.71rem;color:var(--t);line-height:1.5;word-break:break-word}
+/* error */
+.af-err{background:rgba(255,30,60,.06);border:1px solid rgba(255,30,60,.25);color:var(--a);font-size:.69rem;padding:9px 13px;display:none;margin-top:4px}
+.af-err.show{display:block}
+/* success */
+.af-success{text-align:center;padding:56px 28px;animation:fup .5s ease both}
+.af-succ-ring{width:96px;height:96px;border-radius:50%;border:2px solid var(--ac,var(--a));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:3rem;position:relative;animation:rPop .5s cubic-bezier(.16,1,.3,1) both}
+.af-succ-ring::after{content:'';position:absolute;inset:-9px;border-radius:50%;border:1px solid rgba(255,30,60,.2);animation:rExp 2s ease-in-out infinite .5s}
+@keyframes rPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes rExp{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.5);opacity:0}}
+.af-succ-t{font-family:'Orbitron',monospace;font-size:1.15rem;font-weight:900;letter-spacing:.05em;margin-bottom:10px;animation:fup .4s .2s ease both}
+.af-succ-s{font-size:.75rem;color:var(--t2);line-height:1.75;animation:fup .4s .35s ease both}
+.af-succ-btn{margin-top:26px;font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;letter-spacing:.12em;padding:12px 30px;border:1px solid var(--ac,var(--a));background:transparent;color:var(--ac,var(--a));cursor:none;transition:all .3s;animation:fup .4s .5s ease both}
+.af-succ-btn:hover{background:var(--ac,var(--a));color:var(--bg)}
+/* footer */
+.af-footer{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:var(--s2);border-top:1px solid var(--b)}
+.af-back,.af-next{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.12em;padding:10px 22px;border:1px solid;cursor:none;transition:all .3s;position:relative;overflow:hidden}
+.af-back{border-color:rgba(255,255,255,.1);color:var(--t3);background:transparent}
+.af-back:hover:not(:disabled){border-color:var(--t2);color:var(--t)}
+.af-back:disabled{opacity:.2;pointer-events:none}
+.af-next{border-color:var(--ac,var(--a));color:var(--ac,var(--a));background:transparent}
+.af-next::before{content:'';position:absolute;inset:0;background:var(--ac,var(--a));transform:scaleX(0);transform-origin:left;transition:transform .3s;z-index:-1}
+.af-next:hover{color:var(--bg)}.af-next:hover::before{transform:scaleX(1)}
+.af-next.send{border-color:var(--a2);color:var(--a2)}.af-next.send::before{background:var(--a2)}
+.af-next.loading{pointer-events:none;opacity:.65}
+.af-next.loading::after{content:'';display:inline-block;width:10px;height:10px;border:1.5px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;margin-left:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+
+<script>
+const WEBHOOK='https://discord.com/api/webhooks/1484227621377146920/ZRwaJ1zlPUoqlaTcUb2i9_k5hkLKfHm-O1lTdnwo0mk78p8XzglH9TmBvE89wmx1-yi_';
+
+/* ═══════ ROLE DEFINITIONS ═══════ */
+const APPLY_ROLES={
+sup:{name:'SUPPORT',ico:'🎧',color:'#ffd700',badge:'sup',
+  desc:'Hilf Spielern, löse Probleme & sorge für eine gute Atmosphäre.',
+  steps:[
+    {t:'// 01 — Persönliche Daten',f:[
+      {id:'mc',l:'Minecraft-Username',type:'i',ph:'Dein IGN',r:1},
+      {id:'dc',l:'Discord-Username',type:'i',ph:'username',r:1},
+      {id:'age',l:'Wie alt bist du?',type:'s',opts:['— wählen —','12','13','14','15','16','17','18','19','20','21–25','26–30','30+'],r:1},
+      {id:'tz',l:'Zeitzone',type:'s',opts:['— wählen —','UTC+1 (DE/AT/CH)','UTC+2 (Sommer)','UTC±0 (UK)','Andere'],r:1},
+      {id:'lang',l:'Sprachen',type:'c',opts:['Deutsch','Englisch','Türkisch','Arabisch','Russisch','Andere']},
+    ]},
+    {t:'// 02 — Erfahrung',f:[
+      {id:'mc_exp',l:'Wie lange spielst du Minecraft?',type:'r',opts:['<1 Jahr','1–2 Jahre','2–4 Jahre','4+ Jahre'],r:1},
+      {id:'gtmc',l:'Wie lange auf GT-MC?',type:'r',opts:['<1 Woche','1–4 Wochen','1–3 Monate','3–6 Monate','6+ Monate'],r:1},
+      {id:'daily',l:'Stunden täglich online?',type:'r',opts:['<1h','1–2h','2–4h','4–6h','6h+'],r:1},
+      {id:'days',l:'Aktive Tage',type:'c',opts:['Mo','Di','Mi','Do','Fr','Sa','So']},
+      {id:'modes',l:'Gespielte GT-MC Gamemodes',type:'c',opts:['Skyblock','Bedwars','Skywars','MMA','Duels','GTMC','Simple SMP','Knockback FFA','Event Server']},
+    ]},
+    {t:'// 03 — Support-Erfahrung',f:[
+      {id:'sup_exp',l:'Erfahrung als Support/Helper?',type:'r',opts:['Ja, mehrere Server','Ja, ein Server','Nein, will anfangen','Nein'],r:1},
+      {id:'sup_wo',l:'Wo warst du aktiv? (optional)',type:'i',ph:'Servername oder "Nein"'},
+      {id:'sup_dur',l:'Wie lange dort aktiv?',type:'s',opts:['N/A','<1 Monat','1–3 Monate','3–6 Monate','6–12 Monate','1+ Jahr']},
+      {id:'ticket',l:'Erfahrung mit Discord-Tickets?',type:'r',opts:['Ja, viel','Etwas','Keine']},
+      {id:'resp',l:'Wie schnell antwortest du im Schnitt?',type:'r',opts:['<5 Min','5–15 Min','15–30 Min','>30 Min']},
+    ]},
+    {t:'// 04 — Situationen',f:[
+      {id:'angry',l:'Wie gehst du mit einem aufgebrachten Spieler um?',type:'t',ph:'Dein Ansatz...',r:1},
+      {id:'cheat_rep',l:'Ein Spieler meldet einen Cheater. Dein Vorgehen?',type:'t',ph:'Schritte...'},
+      {id:'friend',l:'Dein Freund bricht die Regeln. Was tust du?',type:'r',opts:['Ich bestrafe ihn sofort','Ich warne ihn zuerst','Ich melde es dem Team','Ich schaue weg'],r:1},
+      {id:'insult',l:'Jemand beleidigt dich im Chat. Reaktion?',type:'t',ph:'Deine Reaktion...'},
+      {id:'conflict',l:'Zwei Spieler streiten sich. Was tust du?',type:'t',ph:'Dein Vorgehen...'},
+    ]},
+    {t:'// 05 — Persönlichkeit',f:[
+      {id:'strength',l:'Deine größte Stärke?',type:'t',ph:'Z.B. Geduld, Kommunikation...',r:1},
+      {id:'weak',l:'Deine Schwäche?',type:'t',ph:'Ehrliche Antwort...'},
+      {id:'team',l:'Wie wichtig ist Teamwork?',type:'sc',min:'Unwichtig',max:'Sehr wichtig'},
+      {id:'pressure',l:'Wie gut arbeitest du unter Druck?',type:'sc',min:'Schlecht',max:'Sehr gut'},
+      {id:'mic',l:'Hast du ein Mikrofon?',type:'r',opts:['Ja, gut','Ja, einfach','Nein'],r:1},
+    ]},
+    {t:'// 06 — Motivation',f:[
+      {id:'why',l:'Warum willst du Support bei GT-MC werden?',type:'t',ph:'Deine Motivation...',r:1},
+      {id:'contrib',l:'Was bringst du dem Team?',type:'t',ph:'Dein Mehrwert...',r:1},
+      {id:'know',l:'Was weißt du über GT-MC?',type:'t',ph:'Dein Wissen...'},
+      {id:'improve',l:'Was würdest du am Server verbessern?',type:'t',ph:'Deine Ideen...'},
+      {id:'banned',l:'Wurdest du auf GT-MC jemals gebannt?',type:'r',opts:['Nein','Ja, einmal','Ja, mehrfach'],r:1},
+      {id:'extra',l:'Sonstiges / Anmerkungen',type:'t',ph:'Optional...'},
+    ]},
+  ]
+},
+mod:{name:'MODERATOR',ico:'🛡️',color:'#ff8c42',badge:'mod',
+  desc:'Moderiere den Server, halte die Regeln durch & sorge für Fairness.',
+  steps:[
+    {t:'// 01 — Persönliche Daten',f:[
+      {id:'mc',l:'Minecraft-Username',type:'i',ph:'Dein IGN',r:1},
+      {id:'dc',l:'Discord-Username',type:'i',ph:'username',r:1},
+      {id:'age',l:'Alter',type:'s',opts:['— wählen —','13','14','15','16','17','18','19','20','21–25','26–30','30+'],r:1},
+      {id:'tz',l:'Zeitzone',type:'s',opts:['— wählen —','UTC+1 (DE/AT/CH)','UTC+2 (Sommer)','UTC±0 (UK)','Andere'],r:1},
+      {id:'lang',l:'Sprachen',type:'c',opts:['Deutsch','Englisch','Türkisch','Arabisch','Russisch','Andere']},
+    ]},
+    {t:'// 02 — Spielerfahrung',f:[
+      {id:'mc_exp',l:'Wie lange spielst du Minecraft?',type:'r',opts:['<1 Jahr','1–2 Jahre','2–4 Jahre','4–6 Jahre','6+ Jahre'],r:1},
+      {id:'gtmc',l:'Wie lange auf GT-MC?',type:'r',opts:['<1 Woche','1–4 Wochen','1–3 Monate','3–6 Monate','6+ Monate'],r:1},
+      {id:'daily',l:'Stunden täglich online?',type:'r',opts:['<1h','1–2h','2–4h','4–6h','6h+'],r:1},
+      {id:'days',l:'Aktive Tage',type:'c',opts:['Mo','Di','Mi','Do','Fr','Sa','So']},
+      {id:'rules',l:'Wie gut kennst du die GT-MC Regeln?',type:'sc',min:'Kaum',max:'Sehr gut'},
+    ]},
+    {t:'// 03 — Mod-Erfahrung',f:[
+      {id:'mod_exp',l:'Erfahrung als Moderator?',type:'r',opts:['Ja, mehrere Server','Ja, ein Server','Nur Support','Nein'],r:1},
+      {id:'mod_wo',l:'Wo warst du Mod?',type:'i',ph:'Servername(n) oder "Nein"'},
+      {id:'ban_exp',l:'Hast du schon Bans ausgesprochen?',type:'r',opts:['Ja, viele','Ja, einige','Ja, einen','Nein']},
+      {id:'tools',l:'Bekannte Mod-Tools',type:'c',opts:['LiteBans','AdvancedBan','EssentialsX','LuckPerms','CoreProtect','Keine']},
+      {id:'log',l:'Logs nach Regelverstößen durchsuchen?',type:'r',opts:['Ja, gut','Grundkenntnisse','Nein']},
+    ]},
+    {t:'// 04 — Regelwissen & Situationen',f:[
+      {id:'cheat_ban',l:'Erstmals-Cheater: Wie bestrafe ich ihn?',type:'t',ph:'Vorgehen + Begründung...',r:1},
+      {id:'false_rep',l:'Falscher Report: Was machst du?',type:'t',ph:'Dein Vorgehen...'},
+      {id:'evidence',l:'Wie wichtig sind Beweise vor einer Strafe?',type:'sc',min:'Unwichtig',max:'Absolut nötig'},
+      {id:'friend',l:'Dein Freund cheatet. Was tust du?',type:'r',opts:['Sofort bannen','Erst warnen','Admin informieren','Ignorieren'],r:1},
+      {id:'toxic',l:'Dauerhaft toxischer Spieler: Deine Strategie?',type:'t',ph:'Langfristiger Ansatz...',r:1},
+    ]},
+    {t:'// 05 — Weitere Situationen',f:[
+      {id:'grief_rep',l:'Griefing-Report auf SMP: Wie ermittelst du?',type:'t',ph:'Ermittlungsschritte...'},
+      {id:'mass_spam',l:'Jemand spammt den globalen Chat: Sofortmaßnahmen?',type:'t',ph:'Deine Reaktion...'},
+      {id:'team_dis',l:'Du bist mit einer Team-Entscheidung uneinig: Was tust du?',type:'t',ph:'Dein Umgang...'},
+      {id:'appeal',l:'Gebannter Spieler bittet um Appeal: Dein Prozess?',type:'t',ph:'Schritte...'},
+      {id:'pressure',l:'Wie gut arbeitest du unter Druck?',type:'sc',min:'Schlecht',max:'Sehr gut'},
+    ]},
+    {t:'// 06 — Persönlichkeit & Motivation',f:[
+      {id:'strength',l:'Deine Stärke als Moderator?',type:'t',ph:'...',r:1},
+      {id:'weak',l:'Deine Schwäche?',type:'t',ph:'Ehrlich...'},
+      {id:'mic',l:'Mikrofon vorhanden?',type:'r',opts:['Ja, gut','Ja','Nein'],r:1},
+      {id:'banned',l:'Auf GT-MC jemals gebannt?',type:'r',opts:['Nein','Ja, einmal','Ja, mehrfach'],r:1},
+      {id:'why',l:'Warum willst du Mod bei GT-MC werden?',type:'t',ph:'Deine Motivation...',r:1},
+      {id:'contrib',l:'Was bringst du dem Team?',type:'t',ph:'Dein Mehrwert...',r:1},
+      {id:'extra',l:'Sonstiges',type:'t',ph:'Optional...'},
+    ]},
+  ]
+},
+admin:{name:'ADMIN',ico:'⚙️',color:'#ff6b35',badge:'admin',
+  desc:'Übernimm Verantwortung auf höchster Ebene — führe, entscheide, gestalte.',
+  steps:[
+    {t:'// 01 — Persönliche Daten',f:[
+      {id:'mc',l:'Minecraft-Username',type:'i',ph:'Dein IGN',r:1},
+      {id:'dc',l:'Discord-Username',type:'i',ph:'username',r:1},
+      {id:'age',l:'Alter',type:'s',opts:['— wählen —','14','15','16','17','18','19','20','21–25','26–30','30+'],r:1},
+      {id:'tz',l:'Zeitzone',type:'s',opts:['— wählen —','UTC+1 (DE/AT/CH)','UTC+2 (Sommer)','UTC±0 (UK)','Andere'],r:1},
+      {id:'name',l:'Vorname (optional)',type:'i',ph:'Freiwillig'},
+    ]},
+    {t:'// 02 — Erfahrung',f:[
+      {id:'role_exp',l:'Leitende Position auf anderen Servern?',type:'r',opts:['Ja, als Admin/Co-Owner','Ja, als Senior-Mod','Ja, als Mod','Nur Support','Nein'],r:1},
+      {id:'role_wo',l:'Server / Rolle / Dauer?',type:'t',ph:'Details...'},
+      {id:'team_sz',l:'Wie viele Leute koordiniert?',type:'r',opts:['Noch nie','1–3','4–10','10+']},
+      {id:'gtmc',l:'Wie lange auf GT-MC?',type:'r',opts:['<1 Monat','1–3 Monate','3–6 Monate','6–12 Monate','1+ Jahr'],r:1},
+      {id:'daily',l:'Stunden täglich aktiv?',type:'r',opts:['<2h','2–4h','4–6h','6h+'],r:1},
+    ]},
+    {t:'// 03 — Server-Kenntnisse',f:[
+      {id:'plugins',l:'Bekannte Plugins',type:'c',opts:['EssentialsX','LuckPerms','WorldEdit','WorldGuard','CoreProtect','BungeeCord/Velocity','Spigot/Paper','Andere']},
+      {id:'console',l:'Server-Konsole bedienen?',type:'r',opts:['Ja, sehr gut','Grundkenntnisse','Nein']},
+      {id:'perms',l:'LuckPerms-Kenntnisse?',type:'r',opts:['Ja, ausführlich','Grundkenntnisse','Nein']},
+      {id:'linux',l:'Linux / Server-Admin?',type:'r',opts:['Ja, gut','Grundkenntnisse','Nein']},
+      {id:'backup',l:'Wie wichtig sind regelmäßige Backups?',type:'sc',min:'Unwichtig',max:'Kritisch wichtig'},
+    ]},
+    {t:'// 04 — Führung & Krisen',f:[
+      {id:'team_conf',l:'Zwei Mods streiten: Was tust du?',type:'t',ph:'Dein Vorgehen...',r:1},
+      {id:'bad_mod',l:'Ein Mod missbraucht seine Macht: Was tust du?',type:'t',ph:'Konsequenzen...',r:1},
+      {id:'server_crash',l:'Server crasht während Event: Sofortmaßnahmen?',type:'t',ph:'Reaktion...'},
+      {id:'exploit',l:'Kritischer Exploit wird genutzt: Was machst du?',type:'t',ph:'Schritte...',r:1},
+      {id:'hate',l:'Community hasst dich für eine Entscheidung: Reaktion?',type:'t',ph:'Dein Umgang...'},
+    ]},
+    {t:'// 05 — Persönlichkeit & Vision',f:[
+      {id:'strength',l:'Deine 3 Stärken als Admin?',type:'t',ph:'...',r:1},
+      {id:'weak',l:'Deine Schwäche?',type:'t',ph:'Ehrlich...'},
+      {id:'transparent',l:'Wie wichtig ist Transparenz zur Community?',type:'sc',min:'Unwichtig',max:'Sehr wichtig'},
+      {id:'mic',l:'Mikrofon für Meetings?',type:'r',opts:['Ja, gut','Ja','Nein'],r:1},
+      {id:'banned',l:'Auf GT-MC jemals gebannt?',type:'r',opts:['Nein','Ja, einmal','Ja, mehrfach'],r:1},
+    ]},
+    {t:'// 06 — Motivation & Commitment',f:[
+      {id:'why',l:'Warum willst du Admin bei GT-MC werden?',type:'t',ph:'Deine Motivation...',r:1},
+      {id:'vision',l:'Deine Vision für GT-MC in 6 Monaten?',type:'t',ph:'Deine Ideen...',r:1},
+      {id:'time',l:'Stunden/Woche fest einplanbar?',type:'r',opts:['5–10h','10–20h','20–30h','30h+']},
+      {id:'contrib',l:'Was bringst du dem Team?',type:'t',ph:'Dein Mehrwert...',r:1},
+      {id:'extra',l:'Sonstiges',type:'t',ph:'Optional...'},
+    ]},
+  ]
+},
+dev:{name:'DEVELOPER',ico:'💻',color:'#ff8c42',badge:'dev',
+  desc:'Entwickle Plugins & Features — bring GT-MC technisch auf das nächste Level.',
+  steps:[
+    {t:'// 01 — Persönliche Daten',f:[
+      {id:'mc',l:'Minecraft-Username',type:'i',ph:'Dein IGN',r:1},
+      {id:'dc',l:'Discord-Username',type:'i',ph:'username',r:1},
+      {id:'age',l:'Alter',type:'s',opts:['— wählen —','12','13','14','15','16','17','18','19','20','21–25','26–30','30+'],r:1},
+      {id:'gh',l:'GitHub-Profil (optional)',type:'i',ph:'https://github.com/...'},
+      {id:'name',l:'Vorname (optional)',type:'i',ph:'Freiwillig'},
+    ]},
+    {t:'// 02 — Programmier-Skills',f:[
+      {id:'langs',l:'Beherrschte Programmiersprachen',type:'c',opts:['Java','Kotlin','Python','JavaScript','TypeScript','C#','C++','SQL','Andere']},
+      {id:'java_lvl',l:'Dein Java-Level?',type:'r',opts:['Anfänger','Grundkenntnisse','Fortgeschritten','Experte'],r:1},
+      {id:'years',l:'Wie viele Jahre programmierst du?',type:'r',opts:['<1 Jahr','1–2 Jahre','2–4 Jahre','4–6 Jahre','6+ Jahre'],r:1},
+      {id:'oop',l:'OOP-Kenntnisse?',type:'sc',min:'Kaum',max:'Sehr gut'},
+      {id:'git',l:'Git/GitHub?',type:'r',opts:['Täglich genutzt','Grundkenntnisse','Nein']},
+    ]},
+    {t:'// 03 — Minecraft-Entwicklung',f:[
+      {id:'spigot',l:'Spigot/Paper Plugin-Erfahrung?',type:'r',opts:['Ja, viele Plugins','Ja, einige','Grundkenntnisse','Nein'],r:1},
+      {id:'apis',l:'Bekannte APIs/Frameworks',type:'c',opts:['Spigot API','Paper API','BungeeCord','Velocity','PlaceholderAPI','ProtocolLib','Citizens','Andere']},
+      {id:'pub',l:'Eigene Plugins veröffentlicht?',type:'r',opts:['Ja, öffentlich','Ja, privat','Nein']},
+      {id:'plugin',l:'Beschreibe ein Plugin das du gebaut hast (oder würdest)',type:'t',ph:'Funktion, Technik...',r:1},
+      {id:'perf',l:'Performance-Optimierung?',type:'sc',min:'Egal',max:'Extrem wichtig'},
+    ]},
+    {t:'// 04 — Datenbanken & Tooling',f:[
+      {id:'db',l:'Bekannte Datenbanken',type:'c',opts:['MySQL','SQLite','MongoDB','PostgreSQL','Redis','Keine']},
+      {id:'sql_lvl',l:'SQL-Level?',type:'r',opts:['Kein SQL','Grundkenntnisse','Fortgeschritten','Experte']},
+      {id:'ide',l:'Genutzte IDE',type:'c',opts:['IntelliJ IDEA','Eclipse','VS Code','NetBeans','Andere']},
+      {id:'build',l:'Build-Tools',type:'c',opts:['Maven','Gradle','Ant','Keine']},
+      {id:'docker',l:'Docker/Containerisierung?',type:'r',opts:['Ja, aktiv','Grundkenntnisse','Nein']},
+    ]},
+    {t:'// 05 — Arbeitsweise',f:[
+      {id:'debug',l:'Wie gehst du beim Debuggen vor?',type:'t',ph:'Deine Methode...',r:1},
+      {id:'deadline',l:'Unter Deadline-Druck arbeiten?',type:'r',opts:['Ja, sehr gut','Geht so','Schwierig'],r:1},
+      {id:'collab',l:'Erfahrung in Team-Dev-Projekten?',type:'r',opts:['Ja, oft','Gelegentlich','Noch nie']},
+      {id:'hours',l:'Stunden/Woche einbringbar?',type:'r',opts:['<5h','5–10h','10–20h','20h+'],r:1},
+      {id:'review',l:'Wie wichtig ist Code-Review?',type:'sc',min:'Unwichtig',max:'Sehr wichtig'},
+    ]},
+    {t:'// 06 — Motivation',f:[
+      {id:'why',l:'Warum willst du Dev bei GT-MC werden?',type:'t',ph:'Deine Motivation...',r:1},
+      {id:'feature',l:'Was würdest du als erstes für GT-MC bauen?',type:'t',ph:'Deine Feature-Idee...',r:1},
+      {id:'contrib',l:'Was bringst du technisch mit?',type:'t',ph:'Skills, Projekte...',r:1},
+      {id:'gtmc',l:'Wie lange auf GT-MC?',type:'r',opts:['<1 Woche','1–4 Wochen','1–3 Monate','3–6 Monate','6+ Monate']},
+      {id:'links',l:'Links zu Projekten / GitHub / Portfolio',type:'t',ph:'URLs oder Beschreibung...'},
+    ]},
+  ]
+},
+cc:{name:'CONTENT CREATOR',ico:'📷',color:'#ff4488',badge:'creator',
+  desc:'Erstelle Videos, Streams & Clips — zeig GT-MC der Welt!',
+  steps:[
+    {t:'// 01 — Persönliche Daten',f:[
+      {id:'mc',l:'Minecraft-Username',type:'i',ph:'Dein IGN',r:1},
+      {id:'dc',l:'Discord-Username',type:'i',ph:'username',r:1},
+      {id:'age',l:'Alter',type:'s',opts:['— wählen —','12','13','14','15','16','17','18','19','20','21–25','26–30','30+'],r:1},
+      {id:'name',l:'Vorname (optional)',type:'i',ph:'Freiwillig'},
+      {id:'country',l:'Land',type:'s',opts:['— wählen —','Deutschland','Österreich','Schweiz','Anderes']},
+    ]},
+    {t:'// 02 — Plattform & Reichweite',f:[
+      {id:'platform',l:'Aktive Plattformen',type:'c',opts:['YouTube','Twitch','TikTok','Instagram','Twitter/X','Kick','Andere']},
+      {id:'yt',l:'YouTube-Abonnenten',type:'r',opts:['Kein YT','<100','100–500','500–1k','1k–5k','5k–10k','10k+']},
+      {id:'twitch',l:'Twitch-Follower',type:'r',opts:['Kein Twitch','<50','50–200','200–500','500–1k','1k+']},
+      {id:'tiktok',l:'TikTok-Follower',type:'r',opts:['Kein TikTok','<500','500–2k','2k–10k','10k+']},
+      {id:'link',l:'Link zu deinem Hauptkanal',type:'i',ph:'https://...',r:1},
+    ]},
+    {t:'// 03 — Content-Art',f:[
+      {id:'ctype',l:'Art deines Contents',type:'c',opts:["Let's Plays",'Tutorials','Highlights/Clips','Streams','Shorts/TikToks','Thumbnails','Andere']},
+      {id:'mc_pct',l:'Wie viel % ist Minecraft?',type:'r',opts:['100%','50–99%','25–49%','<25%','Fange gerade an'],r:1},
+      {id:'freq',l:'Wie oft veröffentlichst du?',type:'r',opts:['Täglich','Mehrmals/Woche','Wöchentlich','Alle 2 Wochen','Monatlich','Unregelmäßig'],r:1},
+      {id:'quality',l:'Produktionsqualität?',type:'sc',min:'Einfach',max:'Professionell'},
+      {id:'software',l:'Schnittsoftware',type:'c',opts:['DaVinci Resolve','Adobe Premiere','Final Cut','Vegas Pro','CapCut','Andere','Keine']},
+    ]},
+    {t:'// 04 — GT-MC & Content-Ideen',f:[
+      {id:'gtmc',l:'Wie lange auf GT-MC?',type:'r',opts:['<1 Woche','1–4 Wochen','1–3 Monate','3–6 Monate','6+ Monate'],r:1},
+      {id:'modes',l:'Welche Gamemodes würdest du zeigen?',type:'c',opts:['Skyblock','Bedwars','Skywars','MMA','Duels','GTMC','Simple SMP','Knockback FFA','Event Server']},
+      {id:'idea',l:'Was für Content würdest du über GT-MC machen?',type:'t',ph:'Deine Ideen...',r:1},
+      {id:'collab',l:'Zusammenarbeit mit anderen Creatorn?',type:'r',opts:['Ja, sehr gerne','Vielleicht','Lieber solo']},
+      {id:'hours',l:'Stunden/Woche für GT-MC Content?',type:'r',opts:['<2h','2–5h','5–10h','10–20h','20h+'],r:1},
+    ]},
+    {t:'// 05 — Planung & Commitment',f:[
+      {id:'schedule',l:'Kannst du dich an Content-Plan halten?',type:'r',opts:['Ja, sehr gut','Meistens','Schwierig'],r:1},
+      {id:'community',l:'Wie aktiv mit deiner Community?',type:'sc',min:'Kaum',max:'Sehr aktiv'},
+      {id:'sponsor',l:'Erfahrung mit Sponsorings?',type:'r',opts:['Ja, mehrere','Ja, eines','Nein']},
+      {id:'past',l:'Zusammenarbeit mit anderen Servern?',type:'i',ph:'Server / Details oder "Nein"'},
+      {id:'grow',l:'Wie planst du deinen Kanal weiterzuentwickeln?',type:'t',ph:'Deine Strategie...'},
+    ]},
+    {t:'// 06 — Motivation',f:[
+      {id:'why',l:'Warum willst du Creator bei GT-MC werden?',type:'t',ph:'Deine Motivation...',r:1},
+      {id:'benefit',l:'Wie profitiert GT-MC von dir?',type:'t',ph:'Dein Mehrwert...',r:1},
+      {id:'rules_ok',l:'Bereit die Creator-Richtlinien einzuhalten?',type:'r',opts:['Ja','Nein'],r:1},
+      {id:'examples',l:'Links zu Content-Beispielen',type:'t',ph:'Optional...'},
+      {id:'extra',l:'Sonstiges',type:'t',ph:'Optional...'},
+    ]},
+  ]
+}
+};
+
+/* ═══════ STATE ═══════ */
+let AF={role:null,step:0,total:0,data:{},dir:1};
+
+/* ═══════ RENDER CARDS ═══════ */
+function renderApplyGrid(){
+  const g=document.getElementById('apply-grid');
+  g.innerHTML=Object.entries(APPLY_ROLES).map(([k,r])=>{
+    const rgb=hexToRgb(r.color);
+    const qn=r.steps.reduce((a,s)=>a+s.f.length,0);
+    return `<div class="ap-card rv" id="apc-${k}" style="--cr:${r.color};--cc:rgba(${rgb},.1);--cs:rgba(${rgb},.2)">
+      <span class="ap-ico">${r.ico}</span>
+      <div class="ap-name">${r.name}</div>
+      <div class="ap-badge">${r.badge}</div>
+      <div class="ap-desc">${r.desc}</div>
+      <div class="ap-count">// ${qn} Fragen · ${r.steps.length} Schritte</div>
+      <button class="ap-btn" onclick="openApply('${k}')">JETZT BEWERBEN →</button>
+    </div>`;
+  }).join('');
+  reObserve();refreshCursorTargets();
+}
+
+/* ═══════ OPEN ═══════ */
+function openApply(k){
+  const r=APPLY_ROLES[k];
+  AF={role:k,step:0,total:r.steps.length+1,data:{},dir:1};
+  document.documentElement.style.setProperty('--ac',r.color);
+  document.getElementById('afIco').textContent=r.ico;
+  document.getElementById('afTitle').textContent='Bewerbung: '+r.name;
+  document.querySelectorAll('.ap-card').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('apc-'+k).classList.add('sel');
+  const w=document.getElementById('applyWrap');
+  w.classList.add('open');
+  afRender(0,1);
+  setTimeout(()=>w.scrollIntoView({behavior:'smooth',block:'start'}),120);
+}
+
+function closeApply(){
+  document.getElementById('applyWrap').classList.remove('open');
+  document.querySelectorAll('.ap-card').forEach(c=>c.classList.remove('sel'));
+}
+
+/* ═══════ RENDER STEP ═══════ */
+function afRender(si,dir){
+  const r=APPLY_ROLES[AF.role];
+  const isRev=si===r.steps.length;
+  // progress
+  const pct=Math.round((si/AF.total)*100);
+  document.getElementById('afFill').style.width=pct+'%';
+  document.getElementById('afProgLabel').textContent=`${si+1} / ${AF.total}`;
+  document.getElementById('afSubtitle').textContent=isRev?'Überprüfen & Absenden':`Schritt ${si+1} von ${r.steps.length}`;
+  // dots
+  document.getElementById('afDots').innerHTML=Array.from({length:AF.total},(_,i)=>`<div class="af-dot ${i<si?'done':i===si?'active':'todo'}"></div>`).join('');
+  // footer
+  const back=document.getElementById('afBack'),next=document.getElementById('afNext');
+  back.disabled=si===0;
+  const fc=document.getElementById('afFooterCenter');
+  fc.innerHTML=`<span style="font-size:.6rem;color:var(--t3);letter-spacing:.1em">${si+1} / ${AF.total}</span>`;
+  if(isRev){next.textContent='✓ ABSENDEN';next.className='af-next send';next.onclick=afSubmit;}
+  else{next.textContent='WEITER →';next.className='af-next';next.onclick=()=>afNav(1);}
+  // body
+  const body=document.getElementById('afBody');
+  const cls=dir>0?'active':'back';
+  body.innerHTML='';
+  if(isRev){
+    const d=document.createElement('div');d.className='af-step active';
+    d.innerHTML='<div class="af-step-title">// ÜBERPRÜFEN — Alles korrekt?</div>'+buildReview();
+    body.appendChild(d);
+  } else {
+    const s=r.steps[si];
+    const d=document.createElement('div');d.className='af-step '+cls;
+    d.innerHTML=`<div class="af-step-title">${s.t}</div>`+buildFields(s.f,si)+`<div class="af-err" id="afErr">Bitte fülle alle Pflichtfelder aus <b>(*)</b>.</div>`;
+    body.appendChild(d);
+    restoreFields(si);
+  }
+}
+
+/* ═══════ FIELDS ═══════ */
+function buildFields(fields,si){
+  return fields.map(f=>{
+    const uid=`af_${si}_${f.id}`;
+    const req=f.r?'<b> *</b>':'';
+    let inner='';
+    if(f.type==='i') inner=`<input class="fi" id="${uid}" type="text" placeholder="${f.ph||''}" autocomplete="off">`;
+    else if(f.type==='t') inner=`<textarea class="ft" id="${uid}" placeholder="${f.ph||''}"></textarea>`;
+    else if(f.type==='s') inner=`<select class="fs" id="${uid}">${(f.opts||[]).map(o=>`<option>${o}</option>`).join('')}</select>`;
+    else if(f.type==='r') inner=`<div class="frg">${(f.opts||[]).map((o,i)=>`<input type="radio" class="fr" name="${uid}" id="${uid}r${i}" value="${o}"><label class="frl" for="${uid}r${i}">${o}</label>`).join('')}</div>`;
+    else if(f.type==='c') inner=`<div class="fcg">${(f.opts||[]).map((o,i)=>`<input type="checkbox" class="fc" name="${uid}" id="${uid}c${i}" value="${o}"><label class="fcl" for="${uid}c${i}">${o}</label>`).join('')}</div>`;
+    else if(f.type==='sc') inner=`<div class="fsc"><span class="fsl">${f.min||''}</span>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<div class="fsb"><input type="radio" class="fsr" name="${uid}" id="${uid}s${n}" value="${n}"><label class="fsbl" for="${uid}s${n}">${n}</label></div>`).join('')}<span class="fsl">${f.max||''}</span></div>`;
+    return `<div class="fg"><label class="fl">${f.l}${req}</label>${inner}</div>`;
+  }).join('');
+}
+
+function saveStep(si){
+  const r=APPLY_ROLES[AF.role];
+  r.steps[si].f.forEach(f=>{
+    const uid=`af_${si}_${f.id}`;let v='';
+    if(f.type==='i'||f.type==='t'||f.type==='s'){const el=document.getElementById(uid);v=el?el.value.trim():'';}
+    else if(f.type==='r'||f.type==='sc'){const rb=document.querySelector(`input[name="${uid}"]:checked`);v=rb?rb.value:'';}
+    else if(f.type==='c'){v=Array.from(document.querySelectorAll(`input[name="${uid}"]:checked`)).map(c=>c.value).join(' | ');}
+    AF.data[`${si}_${f.id}`]=v;
+  });
+}
+
+function restoreFields(si){
+  const r=APPLY_ROLES[AF.role];
+  r.steps[si].f.forEach(f=>{
+    const uid=`af_${si}_${f.id}`;const v=AF.data[`${si}_${f.id}`];if(!v)return;
+    if(f.type==='i'||f.type==='t'||f.type==='s'){const el=document.getElementById(uid);if(el)el.value=v;}
+    else if(f.type==='r'||f.type==='sc'){const rb=document.querySelector(`input[name="${uid}"][value="${v}"]`);if(rb)rb.checked=true;}
+    else if(f.type==='c'){v.split(' | ').forEach(val=>{const cb=document.querySelector(`input[name="${uid}"][value="${val}"]`);if(cb)cb.checked=true;});}
+  });
+}
+
+function validateStep(si){
+  const r=APPLY_ROLES[AF.role];
+  for(const f of r.steps[si].f){
+    if(!f.r)continue;
+    const uid=`af_${si}_${f.id}`;let v='';
+    if(f.type==='i'||f.type==='t'){const el=document.getElementById(uid);v=el?el.value.trim():'';}
+    else if(f.type==='s'){const el=document.getElementById(uid);v=el&&el.selectedIndex>0?el.value:'';}
+    else if(f.type==='r'||f.type==='sc'){const rb=document.querySelector(`input[name="${uid}"]:checked`);v=rb?rb.value:'';}
+    if(!v)return false;
+  }
+  return true;
+}
+
+/* ═══════ NAVIGATE ═══════ */
+function afNav(dir){
+  const r=APPLY_ROLES[AF.role];
+  const isRev=AF.step===r.steps.length;
+  if(dir>0&&!isRev){
+    saveStep(AF.step);
+    if(!validateStep(AF.step)){
+      const e=document.getElementById('afErr');
+      if(e){e.classList.add('show');setTimeout(()=>e.classList.remove('show'),3500);}
+      return;
+    }
+  }
+  if(dir<0&&!isRev)saveStep(AF.step);
+  AF.step=Math.max(0,Math.min(r.steps.length,AF.step+dir));
+  AF.dir=dir;
+  afRender(AF.step,dir);
+  document.getElementById('applyWrap').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ═══════ REVIEW ═══════ */
+function buildReview(){
+  const r=APPLY_ROLES[AF.role];
+  let h='<div class="af-review">';
+  r.steps.forEach((s,si)=>{
+    h+=`<div class="af-rev-sec">${s.t}</div>`;
+    s.f.forEach(f=>{
+      const raw=AF.data[`${si}_${f.id}`]||'—';
+      const full=f.type==='t'||raw.length>80;
+      h+=`<div class="af-rev-item${full?' full':''}"><div class="af-rev-q">${f.l}</div><div class="af-rev-a">${raw}</div></div>`;
+    });
+  });
+  return h+'</div>';
+}
+
+/* ═══════ SUBMIT ═══════ */
+async function afSubmit(){
+  const r=APPLY_ROLES[AF.role];
+  const next=document.getElementById('afNext');
+  next.classList.add('loading');next.disabled=true;
+  const mc=AF.data['0_mc']||'Unbekannt';
+  const dc=AF.data['0_dc']||'—';
+  const age=AF.data['0_age']||'—';
+  const cols={sup:16766720,mod:16729173,admin:16711740,dev:16744450,cc:16722056};
+  const fields=[];
+  r.steps.forEach((s,si)=>{
+    fields.push({name:'\u200b',value:`**${s.t}**`,inline:false});
+    s.f.forEach(f=>{
+      const v=(AF.data[`${si}_${f.id}`]||'—').slice(0,1024);
+      fields.push({name:f.l.slice(0,256),value:v||'—',inline:f.type!=='t'&&v.length<80});
+    });
+  });
+  const payload={
+    username:'GT-MC Bewerbung',
+    avatar_url:`https://mc-heads.net/avatar/${encodeURIComponent(mc)}/64`,
+    embeds:[{
+      title:`📋 Neue Bewerbung — ${r.name}`,
+      color:cols[AF.role]||16711740,
+      description:`**Spieler:** ${mc}\n**Discord:** ${dc}\n**Alter:** ${age}`,
+      thumbnail:{url:`https://mc-heads.net/avatar/${encodeURIComponent(mc)}/64`},
+      fields:fields.slice(0,25),
+      footer:{text:`GT-MC Bewerbung • ${new Date().toLocaleString('de-DE')}`}
+    }]
+  };
+  try{
+    const res=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(res.ok||res.status===204){afShowSuccess();}
+    else throw new Error('HTTP '+res.status);
+  }catch(e){
+    next.classList.remove('loading');next.disabled=false;
+    const body=document.getElementById('afBody');
+    const el=document.createElement('div');
+    el.style.cssText='background:rgba(255,30,60,.07);border:1px solid rgba(255,30,60,.25);color:#ff6b35;font-size:.7rem;padding:11px 14px;margin-bottom:12px';
+    el.textContent='Fehler beim Senden: '+e.message+'. Bitte erneut versuchen oder Discord kontaktieren.';
+    body.prepend(el);
+  }
+}
+
+function afShowSuccess(){
+  const r=APPLY_ROLES[AF.role];
+  document.getElementById('afBody').innerHTML=`<div class="af-success">
+    <div class="af-succ-ring" style="border-color:${r.color}">${r.ico}</div>
+    <div class="af-succ-t" style="color:${r.color}">Bewerbung abgeschickt! 🎉</div>
+    <div class="af-succ-s">Danke für deine Bewerbung als <strong style="color:${r.color}">${r.name}</strong>.<br>Das GT-MC Team prüft sie und meldet sich über Discord.<br>Viel Erfolg! 💙</div>
+    <button class="af-succ-btn" style="border-color:${r.color};color:${r.color}" onclick="closeApply()">SCHLIESSEN</button>
+  </div>`;
+  document.getElementById('afBack').disabled=true;
+  document.getElementById('afNext').style.display='none';
+}
+
+renderApplyGrid();
+</script>
+
+</body>
+</html>
